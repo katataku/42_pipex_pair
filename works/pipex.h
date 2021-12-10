@@ -1,5 +1,5 @@
-#ifndef H_PIPEX_H
-# define H_PIPEX_H
+#ifndef PIPEX_H
+# define PIPEX_H
 
-int pipex(void);
-# endif
+int	pipex(int argc, char **argv, char **env);
+#endif

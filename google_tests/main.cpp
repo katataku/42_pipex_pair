@@ -1,11 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <sys/types.h>
-#include <unistd.h> 
-#include <sys/wait.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h> 
+#include <stdlib.h>
 
 extern "C" {
 #include "../works/pipex.h"
@@ -13,5 +8,11 @@ extern "C" {
 
 TEST(pipex, noramal)
 {
-    ASSERT_EQ(pipex(), 0);
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "pwd", "pwd", "actual", NULL};
+    char *env[] = {NULL};
+
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile pwd | pwd > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
 }
