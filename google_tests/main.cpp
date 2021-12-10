@@ -1,11 +1,17 @@
 #include <gtest/gtest.h>
 
-extern "C" int ft_strlen(char *s1, char *s2);
+#include <sys/types.h>
+#include <unistd.h> 
+#include <sys/wait.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h> 
 
-TEST(cpcXX_exXX, sample)
+extern "C" {
+#include "../works/pipex.h"
+}
+
+TEST(pipex, noramal)
 {
-    int i;
-
-    i = 42;
-    ASSERT_EQ(i, 42);
+    ASSERT_EQ(pipex(), 0);
 }
