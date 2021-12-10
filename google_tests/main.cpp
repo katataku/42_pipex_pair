@@ -9,7 +9,7 @@ extern "C" {
 TEST(pipex, noramal)
 {
     int argc = 5;
-    char *argv[] = {"./main", "infile", "pwd", "pwd", "actual", NULL};
+    char *argv[] = {"./main", "infile", "/bin/pwd", "/bin/pwd", "actual", NULL};
     char *env[] = {NULL};
 
     ASSERT_EQ(pipex(argc, argv, env), 0);
