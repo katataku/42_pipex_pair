@@ -6,19 +6,34 @@ int	pipex(int argc, char **argv, char **env)
 	pid_t	wait_pid;
 	int		status_expect;
 	int		filedes [2];
+	int		filedes2 [2];
 	int		fd;
 	int		read_bytes;
 	char	*test_argv[] = {"./a.out", NULL};
 	char	buf[100];
 
+	pipe(filedes2);
+	pid = fork();
+	if (pid == 0)
+	{
+		close(filedes2[READ_INDEX]);
+		dup2(filedes2[WRITE_INDEX], 1);
+		close(filedes2[WRITE_INDEX]);
+		execve("/usr/bin/uname", test_argv, env);
+		perror("execve");
+		exit(0);
+	}
+	close(filedes2[WRITE_INDEX]);
 	pipe(filedes);
 	pid = fork();
 	if (pid == 0)
 	{
+		dup2(filedes2[READ_INDEX], 0);
+		close(filedes2[READ_INDEX]);
 		close(filedes[READ_INDEX]);
 		dup2(filedes[WRITE_INDEX], 1);
 		close(filedes[WRITE_INDEX]);
-		execve("/bin/pwd", test_argv, env);
+		execve("/bin/cat", test_argv, env);
 		perror("execve");
 		exit(0);
 	}
