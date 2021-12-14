@@ -7,6 +7,7 @@ int	pipex(int argc, char **argv, char **env)
 	int		status_expect;
 	int		filedes [2];
 	int		fd;
+	int		read_bytes;
 	char	*test_argv[] = {"./a.out", NULL};
 	char	buf[100];
 
@@ -24,11 +25,14 @@ int	pipex(int argc, char **argv, char **env)
 	else
 	{
 		close(filedes[WRITE_INDEX]);
-		wait_pid = wait(&status_expect);
 		fd = open("actual", O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
-		while (read(filedes[READ_INDEX], buf, 1) > 0)
+		while (1)
 		{
-			write(fd, buf, 1);
+			read_bytes = read(filedes[READ_INDEX], buf, 100);
+			if (read_bytes > 0)
+				write(fd, buf, read_bytes);
+			else
+				break ;
 		}
 		close(filedes[READ_INDEX]);
 	}
@@ -56,7 +60,7 @@ int main(argc, argv,env)
 /* タスクリスト
 
 ## 検証
-- wait
+- waitが効いていない（問題になるまで放置）
 
 ## テストケース
 - setup/teardownの作成
