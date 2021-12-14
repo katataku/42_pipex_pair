@@ -2,35 +2,37 @@
 
 int	pipex(int argc, char **argv, char **env)
 {
-	pid_t pid;
-	pid_t wait_pid;
-	int	status_expect;
-	int filedes [2];
-	int	fd;
-	char *test_argv[] = {"./a.out"};
-	//char	*buf = calloc(1,100);
-	unsigned int buf[100];
+	pid_t	pid;
+	pid_t	wait_pid;
+	int		status_expect;
+	int		filedes [2];
+	int		fd;
+	char	*test_argv[] = {"./a.out", NULL};
+	char	buf[100];
 
 	pipe(filedes);
 	pid = fork();
 	if (pid == 0)
 	{
-		close(filedes[0]);
-		dup2(filedes[1] , 1);
-		dup2(filedes[1] , 2);
+		close(filedes[READ_INDEX]);
+		close(1);
+		dup2(filedes[WRITE_INDEX], 1);
+		close(filedes[WRITE_INDEX]);
 		execve("/bin/pwd", test_argv, env);
+		perror("execve");
 		exit(0);
 	}
 	else
 	{
-		close(filedes[1]);
+		close(filedes[WRITE_INDEX]);
 		wait_pid = wait(&status_expect);
-		read(filedes[0], buf, 100);
 		fd = open("actual", O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
-		printf("%s\n", buf);
-		//write(fd, buf, 100);
+		while (read(filedes[READ_INDEX], buf, 1) > 0)
+		{
+			write(fd, buf, 1);
+		}
+		close(filedes[READ_INDEX]);
 	}
-	
 	return (0);
 }
 
@@ -53,6 +55,14 @@ int main(argc, argv,env)
 }*/
 
 /* タスクリスト
+
+## 検証
+- close, dup2の第２引数はcloseする必要があるかないか。
+- wait
+
+## テストケース
+- setup/teardownの作成
+
 ## 正常系
 - lsで渡されてきたら/user/bin/lsみたいにパス解決
 - 引数を分割して渡してあげる
