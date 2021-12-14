@@ -12,6 +12,9 @@ TEST(pipex, noramal)
     char *argv[] = {"./main", "infile", "/bin/pwd", "/bin/pwd", "actual", NULL};
     char *env[] = {NULL};
 
+    unlink("actual");
+    unlink("expected");
+
     ASSERT_EQ(pipex(argc, argv, env), 0);
     system("< infile pwd | pwd > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
