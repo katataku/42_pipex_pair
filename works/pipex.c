@@ -15,7 +15,6 @@ int	pipex(int argc, char **argv, char **env)
 	if (pid == 0)
 	{
 		close(filedes[READ_INDEX]);
-		close(1);
 		dup2(filedes[WRITE_INDEX], 1);
 		close(filedes[WRITE_INDEX]);
 		execve("/bin/pwd", test_argv, env);
@@ -57,7 +56,6 @@ int main(argc, argv,env)
 /* タスクリスト
 
 ## 検証
-- close, dup2の第２引数はcloseする必要があるかないか。
 - wait
 
 ## テストケース
