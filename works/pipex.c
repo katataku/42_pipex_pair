@@ -40,7 +40,7 @@ int	pipex(int argc, char **argv, char **env)
 	else
 	{
 		close(filedes[WRITE_INDEX]);
-		fd = open("actual", O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
 		while (1)
 		{
 			read_bytes = read(filedes[READ_INDEX], buf, 100);
@@ -81,6 +81,7 @@ int main(argc, argv,env)
 - setup/teardownの作成
 
 ## 正常系
+- 入力ファイルから読み込みを実装
 - lsで渡されてきたら/user/bin/lsみたいにパス解決
 - 引数を分割して渡してあげる
 - 
