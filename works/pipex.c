@@ -19,7 +19,7 @@ int	pipex(int argc, char **argv, char **env)
 		close(filedes2[READ_INDEX]);
 		dup2(filedes2[WRITE_INDEX], 1);
 		close(filedes2[WRITE_INDEX]);
-		execve("/usr/bin/uname", test_argv, env);
+		execve(argv[2], test_argv, env);
 		perror("execve");
 		exit(0);
 	}
@@ -33,7 +33,7 @@ int	pipex(int argc, char **argv, char **env)
 		close(filedes[READ_INDEX]);
 		dup2(filedes[WRITE_INDEX], 1);
 		close(filedes[WRITE_INDEX]);
-		execve("/usr/bin/rev", test_argv, env);
+		execve(argv[3], test_argv, env);
 		perror("execve");
 		exit(0);
 	}
