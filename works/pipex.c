@@ -28,44 +28,22 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 int	pipex(int argc, char **argv, char **env)
 {
 	pid_t	pid;
-	pid_t	wait_pid;
-	int		status_expect;
 	int		filedes [2];
-	int		filedes2 [2];
 	int		fd;
-	int		read_bytes;
-	char	buf[100];
 
-	pipe(filedes2);
-	pid = fork();
-	if (pid == 0)
-	{
-		fd = open(argv[1], O_RDWR, S_IREAD);
-		close(filedes2[READ_INDEX]);
-		exec_child(argv[2], env, fd, filedes2[WRITE_INDEX]);
-	}
-	close(filedes2[WRITE_INDEX]);
+	fd = open(argv[1], O_RDWR, S_IREAD);
 	pipe(filedes);
 	pid = fork();
 	if (pid == 0)
 	{
 		close(filedes[READ_INDEX]);
-		exec_child(argv[3], env, filedes2[READ_INDEX], filedes[WRITE_INDEX]);
+		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
-	else
-	{
-		close(filedes[WRITE_INDEX]);
-		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
-		while (1)
-		{
-			read_bytes = read(filedes[READ_INDEX], buf, 100);
-			if (read_bytes > 0)
-				write(fd, buf, read_bytes);
-			else
-				break ;
-		}
-		close(filedes[READ_INDEX]);
-	}
+	close(filedes[WRITE_INDEX]);
+	fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+	pid = fork();
+	if (pid == 0)
+		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	return (0);
 }
 
