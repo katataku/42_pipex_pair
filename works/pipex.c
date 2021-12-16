@@ -1,5 +1,19 @@
 #include "pipex.h"
 
+void	safely_dup(int fd, int tar_fd)
+{
+	if (dup2(fd, tar_fd) < 0)
+	{
+		perror("dup2");
+		exit (1);
+	}
+	if (close(fd) < 0)
+	{
+		perror("close");
+		exit (1);
+	}
+}
+
 int	pipex(int argc, char **argv, char **env)
 {
 	pid_t	pid;
@@ -17,11 +31,9 @@ int	pipex(int argc, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd = open(argv[1], O_RDWR, S_IREAD);
-		dup2(fd, 0);
-		close(fd);
+		safely_dup(fd, 0);
 		close(filedes2[READ_INDEX]);
-		dup2(filedes2[WRITE_INDEX], 1);
-		close(filedes2[WRITE_INDEX]);
+		safely_dup(filedes2[WRITE_INDEX], 1);
 		execve(argv[2], test_argv, env);
 		perror("execve");
 		exit(0);
@@ -31,11 +43,9 @@ int	pipex(int argc, char **argv, char **env)
 	pid = fork();
 	if (pid == 0)
 	{
-		dup2(filedes2[READ_INDEX], 0);
-		close(filedes2[READ_INDEX]);
+		safely_dup(filedes2[READ_INDEX], 0);
 		close(filedes[READ_INDEX]);
-		dup2(filedes[WRITE_INDEX], 1);
-		close(filedes[WRITE_INDEX]);
+		safely_dup(filedes[WRITE_INDEX], 1);
 		execve(argv[3], test_argv, env);
 		perror("execve");
 		exit(0);
@@ -91,4 +101,5 @@ int main(argc, argv,env)
 ## 異常系
 - file2が存在しない場合
 - 作られるファイルのパーミッションをあわせる
+- 子プロセスが異常した時のハンドリング
 */
