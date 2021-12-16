@@ -14,6 +14,17 @@ void	safely_dup(int fd, int tar_fd)
 	}
 }
 
+void	exec_child(char *path, char **env, int read_fd, int write_fd)
+{
+	char	*test_argv[] = {"./a.out", NULL};
+
+	safely_dup(read_fd, 0);
+	safely_dup(write_fd, 1);
+	execve(path, test_argv, env);
+	perror("execve");
+	exit(0);
+}
+
 int	pipex(int argc, char **argv, char **env)
 {
 	pid_t	pid;
@@ -23,7 +34,6 @@ int	pipex(int argc, char **argv, char **env)
 	int		filedes2 [2];
 	int		fd;
 	int		read_bytes;
-	char	*test_argv[] = {"./a.out", NULL};
 	char	buf[100];
 
 	pipe(filedes2);
@@ -31,24 +41,16 @@ int	pipex(int argc, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd = open(argv[1], O_RDWR, S_IREAD);
-		safely_dup(fd, 0);
 		close(filedes2[READ_INDEX]);
-		safely_dup(filedes2[WRITE_INDEX], 1);
-		execve(argv[2], test_argv, env);
-		perror("execve");
-		exit(0);
+		exec_child(argv[2], env, fd, filedes2[WRITE_INDEX]);
 	}
 	close(filedes2[WRITE_INDEX]);
 	pipe(filedes);
 	pid = fork();
 	if (pid == 0)
 	{
-		safely_dup(filedes2[READ_INDEX], 0);
 		close(filedes[READ_INDEX]);
-		safely_dup(filedes[WRITE_INDEX], 1);
-		execve(argv[3], test_argv, env);
-		perror("execve");
-		exit(0);
+		exec_child(argv[3], env, filedes2[READ_INDEX], filedes[WRITE_INDEX]);
 	}
 	else
 	{
