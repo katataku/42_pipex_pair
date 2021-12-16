@@ -51,3 +51,19 @@ TEST(pipex, sort_rev)
     system("< infile sort | rev > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
 }
+
+TEST(pipex, with_option)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/usr/bin/grep ab", "/usr/bin/wc -l -c", "actual", NULL};
+    char *env[] = {NULL};
+
+    unlink("actual");
+    unlink("expected");
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile grep ab | wc -l -c > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+}

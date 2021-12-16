@@ -16,11 +16,12 @@ void	safely_dup(int fd, int tar_fd)
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
-	char	*test_argv[] = {"./a.out", NULL};
+	char	**argv;
 
+	argv = ft_split(path, ' ');
 	safely_dup(read_fd, 0);
 	safely_dup(write_fd, 1);
-	execve(path, test_argv, env);
+	execve(argv[0], argv, env);
 	perror("execve");
 	exit(0);
 }
@@ -71,10 +72,7 @@ int main(argc, argv,env)
 - setup/teardownの作成
 
 ## 正常系
-- 入力ファイルから読み込みを実装
 - lsで渡されてきたら/user/bin/lsみたいにパス解決
-- 引数を分割して渡してあげる
-- 
 ## 異常系
 - file2が存在しない場合
 - 作られるファイルのパーミッションをあわせる
