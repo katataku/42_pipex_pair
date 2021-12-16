@@ -33,7 +33,7 @@ int	pipex(int argc, char **argv, char **env)
 		close(filedes[READ_INDEX]);
 		dup2(filedes[WRITE_INDEX], 1);
 		close(filedes[WRITE_INDEX]);
-		execve("/bin/cat", test_argv, env);
+		execve("/usr/bin/rev", test_argv, env);
 		perror("execve");
 		exit(0);
 	}

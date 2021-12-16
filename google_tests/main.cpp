@@ -19,15 +19,15 @@ TEST(pipex, pwd_pwd)
     ASSERT_EQ(system("diff actual expected"), 0);
 }
 
-TEST(pipex, uname_cat)
+TEST(pipex, uname_rev)
 {
     int argc = 5;
-    char *argv[] = {"./main", "infile", "/usr/bin/uname", "/bin/cat", "actual", NULL};
+    char *argv[] = {"./main", "infile", "/usr/bin/uname", "/usr/bin/rev", "actual", NULL};
     char *env[] = {NULL};
 
     unlink("actual");
     unlink("expected");
     ASSERT_EQ(pipex(argc, argv, env), 0);
-    system("< infile uname | cat > expected");
+    system("< infile uname | rev > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
 }
