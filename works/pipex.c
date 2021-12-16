@@ -16,6 +16,9 @@ int	pipex(int argc, char **argv, char **env)
 	pid = fork();
 	if (pid == 0)
 	{
+		fd = open(argv[1], O_RDWR, S_IREAD);
+		dup2(fd, 0);
+		close(fd);
 		close(filedes2[READ_INDEX]);
 		dup2(filedes2[WRITE_INDEX], 1);
 		close(filedes2[WRITE_INDEX]);
