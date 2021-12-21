@@ -95,13 +95,14 @@ char	*get_command(char *file_name, char **env)
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
 	char	**argv;
+	char	*command;
 
 	argv = ft_split(path, ' ');
 	safely_dup(read_fd, 0);
 	safely_dup(write_fd, 1);
-//	execve(get_command(argv[0], env), argv, env);
-	execve(argv[0], argv, env);
-	perror("execve");
+	command = get_command(argv[0], env);
+	execve(command, argv, env);
+	perror(command);
 	exit(0);
 }
 
