@@ -58,6 +58,7 @@ char	*get_command(char *file_name, char **env)
 		free(fullpath);
 		index++;
 	}
+	write(2,"commnd not found ",15);
 	exit(1);
 }
 
@@ -145,8 +146,11 @@ int main(argc, argv,env)
 
 /* タスクリスト
 
+次回は異常系から。
+
 ## 検証
 - waitが効いていない（問題になるまで放置）
+- 環境変数にPATHがない場合(検証が大変そう)
 
 ## テストケース
 - setup/teardownの作成
@@ -154,14 +158,18 @@ int main(argc, argv,env)
 - 高優先度のパスにpermissionなし
 - 低優先度のパスにpermissionあり
 - 低優先度のパスにpermissionなし
-- ./ls
-
 
 ## 正常系
+- main関数を作成する。
+- check_args関数を作成する。	
 - fdのクローズ(そのためにwait)
 
 ## 異常系
-- file2が存在しない場合
+- file1が存在しない
+- file1がパーミッションエラー
+- file2が存在しない
+- file2がパーミッションエラー
+
 - 作られるファイルのパーミッションをあわせる
 - 子プロセスが異常した時のハンドリング
 */
