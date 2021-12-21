@@ -14,9 +14,20 @@ void	safely_dup(int fd, int tar_fd)
 	}
 }
 
-char*	get_command(char *file_name,char **env)
+char	*get_command(char *file_name, char **env)
 {
-	return NULL;
+	int	index;
+
+	index = 0;
+	while (1)
+	{
+		if (env[index] == NULL)
+			return (NULL);
+		if (ft_strncmp("PATH=", env[index], 5) == 0)
+			break ;
+		index++;
+	}
+	return (env[index]);
 }
 
 //char*	get_command (file_name, env)
