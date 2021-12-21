@@ -23,6 +23,10 @@ char	*get_command(char *file_name, char **env)
 	int		access_check;
 
 	index = 0;
+	if (ft_strchr(file_name, '/') != NULL)
+	{
+		return (file_name);
+	}
 	while (1)
 	{
 		if (env[index] == NULL)
@@ -153,8 +157,6 @@ int main(argc, argv,env)
 
 
 ## 正常系
-- lsで渡されてきたら/user/bin/lsみたいにパス解決
-- ./lsの対応
 - fdのクローズ(そのためにwait)
 
 ## 異常系
