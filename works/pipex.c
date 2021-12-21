@@ -14,6 +14,42 @@ void	safely_dup(int fd, int tar_fd)
 	}
 }
 
+char*	get_command(char *file_name,char **env)
+{
+	return NULL;
+}
+
+//char*	get_command (file_name, env)
+//{
+//	//errorはexit
+
+//	// 例外ケース。PATHがない。
+//	// envからPATHを探す
+//	int	index = 0;
+//	while (True)
+//	{
+//		if (env[i] == NULL)
+//			return 'ありまえｓん'
+//		if (ft_strncmp("PATH=", env[i], 5);
+//			break;
+//		i++;
+//		env[i] + 5
+//	}
+//	// PATHを分割
+//	path = ft_split(env[i]+5, ':');
+//	i = 0;
+//	while (path[i] != NULL)
+//	{
+//		// PATHとコマンドをくっつける
+//		fullpath = ft_strjoin(path[i],file_name);
+//		// accessをつかって権限やファイルなどがあるか
+//		access(fullpath,XX);
+//		if (OK)
+//			return 
+//		return get_command(filename,next(env));
+//	}
+//}
+
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
 	char	**argv;
@@ -21,6 +57,7 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 	argv = ft_split(path, ' ');
 	safely_dup(read_fd, 0);
 	safely_dup(write_fd, 1);
+//	execve(get_command(argv[0], env), argv, env);
 	execve(argv[0], argv, env);
 	perror("execve");
 	exit(0);
@@ -70,9 +107,18 @@ int main(argc, argv,env)
 
 ## テストケース
 - setup/teardownの作成
+- 高優先度のパスにpermissionあり
+- 高優先度のパスにpermissionなし
+- 低優先度のパスにpermissionあり
+- 低優先度のパスにpermissionなし
+- ./ls
+
 
 ## 正常系
 - lsで渡されてきたら/user/bin/lsみたいにパス解決
+- ./lsの対応
+- fdのクローズ(そのためにwait)
+
 ## 異常系
 - file2が存在しない場合
 - 作られるファイルのパーミッションをあわせる

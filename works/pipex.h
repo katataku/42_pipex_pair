@@ -11,6 +11,7 @@
 # define READ_INDEX 0
 # define WRITE_INDEX 1
 
+char*	get_command(char *file_name,char **env);
 int	pipex(int argc, char **argv, char **env);
 
 #endif
