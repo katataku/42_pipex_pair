@@ -16,7 +16,11 @@ void	safely_dup(int fd, int tar_fd)
 
 char	*get_command(char *file_name, char **env)
 {
-	int	index;
+	int		index;
+	char	**path;
+	char	*fullpath;
+	char	*file_name_with_slash;
+	int		access_check;
 
 	index = 0;
 	while (1)
@@ -27,8 +31,30 @@ char	*get_command(char *file_name, char **env)
 			break ;
 		index++;
 	}
-
-	return (env[index] + 5);
+	path = ft_split(env[index] + 5, ':');
+	file_name_with_slash = ft_strjoin("/", file_name);
+	if (file_name_with_slash == NULL)
+	{
+		exit (1);
+	}
+	index = 0;
+	while (path[index] != NULL)
+	{
+		fullpath = ft_strjoin(path[index], file_name_with_slash);
+		if (fullpath == NULL)
+		{
+			exit(1);
+		}
+		access_check = access(fullpath, F_OK);
+		if (access_check == 0)
+		{
+			free(file_name_with_slash);
+			return (fullpath);
+		}
+		free(fullpath);
+		index++;
+	}
+	exit(1);
 }
 
 //char*	get_command (file_name, env)
