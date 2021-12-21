@@ -27,7 +27,8 @@ char	*get_command(char *file_name, char **env)
 			break ;
 		index++;
 	}
-	return (env[index]);
+
+	return (env[index] + 5);
 }
 
 //char*	get_command (file_name, env)

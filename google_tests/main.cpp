@@ -80,7 +80,7 @@ TEST(get_command, with_option)
         NULL
     };
 
-    ASSERT_STREQ(get_command("ls", env), "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin");
+    ASSERT_STREQ(get_command("ls", env), "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin");
 }
 
 //TEST(pipex, resolve_path)
