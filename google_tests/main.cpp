@@ -162,18 +162,26 @@ TEST(pipex, abnormal_outfile)
     ASSERT_EQ(expect_stderr, actual_stderr);
 }
 
-//TEST(pipex, resolve_path)
-//{
-//    system("echo bc > infile");
-//    system("echo ab >> infile");
+TEST(pipex, resolve_path)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
 
-//    int argc = 5;
-//    char *argv[] = {"./main", "infile", "grep ab", "wc -l -c", "actual", NULL};
-//    char *env[] = {NULL};
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "grep ab", "wc -l -c", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
 
-//    unlink("actual");
-//    unlink("expected");
-//    ASSERT_EQ(pipex(argc, argv, env), 0);
-//    system("< infile grep ab | wc -l -c > expected");
-//    ASSERT_EQ(system("diff actual expected"), 0);
-//}
+    unlink("actual");
+    unlink("expected");
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile grep ab | wc -l -c > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+}

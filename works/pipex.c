@@ -103,7 +103,7 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 	safely_dup(write_fd, 1);
 	command = get_command(argv[0], env);
 	execve(command, argv, env);
-	perror(command);
+	perror("execve");
 	exit(0);
 }
 
@@ -188,4 +188,5 @@ int main(argc, argv,env)
 
 - 作られるファイルのパーミッションをあわせる
 - 子プロセスが異常した時のハンドリング
+- コマンドが見つからないケース
 */
