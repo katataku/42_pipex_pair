@@ -112,6 +112,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid_t	pid;
 	int		filedes [2];
 	int		fd;
+	int		status;
 
 	pipe(filedes);
 	pid = fork();
@@ -125,11 +126,20 @@ int	pipex(int argc, char **argv, char **env)
 		}
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
+	waitpid(pid, &status, 0);
 	close(filedes[WRITE_INDEX]);
-	fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
 	pid = fork();
 	if (pid == 0)
+	{
+		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+		if (fd < 0)
+		{
+			perror(argv[4]);
+			exit(1);
+		}
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
+	}
+	waitpid(pid, &status, 0);
 	return (0);
 }
 
@@ -170,11 +180,10 @@ int main(argc, argv,env)
 - main関数を作成する。
 - check_args関数を作成する。	
 - fdのクローズ(そのためにwait)
+- ファイル作成されるときのパーミッションを合わせる
 
 ## 異常系
-- file1が存在しない
 - file1がパーミッションエラー
-- file2が存在しない
 - file2がパーミッションエラー
 
 - 作られるファイルのパーミッションをあわせる
