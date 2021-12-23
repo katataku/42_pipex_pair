@@ -114,6 +114,30 @@ TEST(get_command, has_slash2)
     ASSERT_STREQ(get_command("./ls", env), "./ls");
 }
 
+TEST(pipex, abnormal)
+{
+    unlink("infile");
+	const char *expect_stderr = "infile: No such file or directory\n";
+	const char *actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/bin/ls", "/bin/cat", "actual", NULL};
+    char *env[] = {NULL};
+
+    unlink("actual");
+    unlink("expected");
+    testing::internal::CaptureStderr();
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+	actual_stderr = testing::internal::GetCapturedStderr().c_str();
+
+    testing::internal::CaptureStderr();
+    system("< infile ls | cat > expected");
+    testing::internal::GetCapturedStderr().c_str();
+    ASSERT_EQ(system("diff actual expected"), 0);
+    ASSERT_STREQ(expect_stderr, actual_stderr);
+}
+
+
+
 //TEST(pipex, resolve_path)
 //{
 //    system("echo bc > infile");

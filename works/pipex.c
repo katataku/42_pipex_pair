@@ -113,11 +113,18 @@ int	pipex(int argc, char **argv, char **env)
 	int		filedes [2];
 	int		fd;
 
-	fd = open(argv[1], O_RDWR, S_IREAD);
 	pipe(filedes);
 	pid = fork();
 	if (pid == 0)
+	{
+		fd = open(argv[1], O_RDWR, S_IREAD);
+		if (fd < 0)
+		{
+			perror(argv[1]);
+			exit(1);
+		}
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
+	}
 	close(filedes[WRITE_INDEX]);
 	fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
 	pid = fork();
