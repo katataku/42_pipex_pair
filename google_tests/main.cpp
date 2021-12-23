@@ -185,3 +185,19 @@ TEST(pipex, resolve_path)
     system("< infile grep ab | wc -l -c > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
 }
+
+TEST(pipex, no_env_path)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "grep ab", "wc -l -c", "actual", NULL};
+    char *env[] = {NULL};
+
+    unlink("actual");
+    unlink("expected");
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile grep ab | wc -l -c > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+}

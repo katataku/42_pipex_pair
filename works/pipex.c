@@ -163,10 +163,13 @@ int main(argc, argv,env)
 
 /* タスクリスト
 
-次回は異常系から。
+次回は、
+get_commandの異常系。
+- 異常系の動作確認も踏まえて
+- PATHがない場合 bash: ./fasdfa: No such file or directory
+- コマンドが見つからない場合 bash: ojoa: command not found
 
 ## 検証
-- waitが効いていない（問題になるまで放置）
 - 環境変数にPATHがない場合(検証が大変そう)
 
 ## テストケース
