@@ -58,7 +58,7 @@ char	*get_command(char *file_name, char **env)
 		free(fullpath);
 		index++;
 	}
-	write(2,"commnd not found ",15);
+	write(2, "commnd not found ", 15);
 	exit(1);
 }
 
@@ -150,28 +150,23 @@ int pipex(void)
     retudorn (0);
 
 }
-
 */
 
-int main(int argc, char **argv, char **env)
-{
-    //if (check_args(argc,argv,env) == -1)
-    //    return (-1);
-    return pipex(argc,argv,env);
-}
+// int main(int argc, char **argv, char **env)
+// {
+//     //if (check_args(argc,argv,env) == -1)
+//     //    return (-1);
+//     return pipex(argc,argv,env);
+// }
 
 /* タスクリスト
 
 次回は、
-- pipeに大量のデータを流す場合。waitの場所によっては詰まってしまう
-- 終了ステータス パイプの終了ステータス echo $? bash man
+- メイン関数の終了ステータス パイプの終了ステータス echo $? bash man
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
-
-- ファイルのエラーとexecのエラーの優先順位とか
-
-python -c "print('a'*1000)"
+- 「ファイルアクセスのエラー」と「execveのエラー」のエラー、どちらのエラーを出力するかの優先順位
 
 ## テストケース
 - setup/teardownの作成
@@ -179,12 +174,14 @@ python -c "print('a'*1000)"
 - 高優先度のパスにpermissionなし
 - 低優先度のパスにpermissionあり
 - 低優先度のパスにpermissionなし
-- 100万1文字のinfileでパイプが詰まらないことのテストをする。
 
 ## 正常系
 - main関数を作成する。
-- check_args関数を作成する。	
-- fdのクローズ(そのためにwait)
+- check_args関数を作成する。
+	- 引数が足りない。
+	- 引数が多い。
+- fdのクローズ
+	- 変に残ってるFDがないかを最後にチェックする。
 - ファイル作成されるときのパーミッションを合わせる
 
 ## 異常系
@@ -193,8 +190,9 @@ python -c "print('a'*1000)"
 
 - 子プロセスが異常した時のハンドリング
 - コマンドが見つからないケース
-- fork失敗時の対応
-- 他のシステムコール系も異常系フォロー
+- システムコールのエラーハンドリング
+	- fork
+	- e.t.c.
 get_commandの異常系。
 - 異常系の動作確認も踏まえて
 - PATHがない場合 bash: ./fasdfa: No such file or directory
