@@ -153,13 +153,12 @@ int pipex(void)
 
 */
 
-/*
-int main(argc, argv,env)
-{
-    if (check_args(argc,argv,env) == -1)
-        return (-1);
-    return pipex(argc,argv,env);    
-}*/
+//int main(int argc, char **argv, char **env)
+//{
+//    //if (check_args(argc,argv,env) == -1)
+//    //    return (-1);
+//    return pipex(argc,argv,env);
+//}
 
 /* タスクリスト
 
@@ -171,6 +170,9 @@ get_commandの異常系。
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
+- pipeに大量のデータを流す場合。waitの場所によっては詰まってしまう
+- 終了ステータス パイプの終了ステータス echo $? bash man
+- ファイルのエラーとexecのエラーの優先順位とか
 
 ## テストケース
 - setup/teardownの作成
