@@ -109,13 +109,13 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 
 int	pipex(int argc, char **argv, char **env)
 {
-	pid_t	pid;
-	int		filedes [2];
+	pid_t	pid[2];
+	int		filedes[2];
 	int		fd;
-	int		status;
+	int		status[2];
 
 	pipe(filedes);
-	pid = fork();
+	pid[0] = fork();
 	if (pid == 0)
 	{
 		fd = open(argv[1], O_RDWR, S_IREAD);
@@ -126,9 +126,8 @@ int	pipex(int argc, char **argv, char **env)
 		}
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
-	waitpid(pid, &status, 0);
 	close(filedes[WRITE_INDEX]);
-	pid = fork();
+	pid[1] = fork();
 	if (pid == 0)
 	{
 		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
@@ -139,7 +138,8 @@ int	pipex(int argc, char **argv, char **env)
 		}
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	}
-	waitpid(pid, &status, 0);
+	waitpid(pid[0], &status[0], 0);
+	waitpid(pid[1], &status[1], 0);
 	return (0);
 }
 
@@ -153,26 +153,25 @@ int pipex(void)
 
 */
 
-//int main(int argc, char **argv, char **env)
-//{
-//    //if (check_args(argc,argv,env) == -1)
-//    //    return (-1);
-//    return pipex(argc,argv,env);
-//}
+int main(int argc, char **argv, char **env)
+{
+    //if (check_args(argc,argv,env) == -1)
+    //    return (-1);
+    return pipex(argc,argv,env);
+}
 
 /* タスクリスト
 
 次回は、
-get_commandの異常系。
-- 異常系の動作確認も踏まえて
-- PATHがない場合 bash: ./fasdfa: No such file or directory
-- コマンドが見つからない場合 bash: ojoa: command not found
+- pipeに大量のデータを流す場合。waitの場所によっては詰まってしまう
+- 終了ステータス パイプの終了ステータス echo $? bash man
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
-- pipeに大量のデータを流す場合。waitの場所によっては詰まってしまう
-- 終了ステータス パイプの終了ステータス echo $? bash man
+
 - ファイルのエラーとexecのエラーの優先順位とか
+
+python -c "print('a'*1000)"
 
 ## テストケース
 - setup/teardownの作成
@@ -195,4 +194,8 @@ get_commandの異常系。
 - コマンドが見つからないケース
 - fork失敗時の対応
 - 他のシステムコール系も異常系フォロー
+get_commandの異常系。
+- 異常系の動作確認も踏まえて
+- PATHがない場合 bash: ./fasdfa: No such file or directory
+- コマンドが見つからない場合 bash: ojoa: command not found
 */
