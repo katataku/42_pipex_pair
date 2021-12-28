@@ -116,7 +116,7 @@ int	pipex(int argc, char **argv, char **env)
 
 	pipe(filedes);
 	pid[0] = fork();
-	if (pid == 0)
+	if (pid[0] == 0)
 	{
 		fd = open(argv[1], O_RDWR, S_IREAD);
 		if (fd < 0)
@@ -128,7 +128,7 @@ int	pipex(int argc, char **argv, char **env)
 	}
 	close(filedes[WRITE_INDEX]);
 	pid[1] = fork();
-	if (pid == 0)
+	if (pid[1] == 0)
 	{
 		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
 		if (fd < 0)
@@ -179,6 +179,7 @@ python -c "print('a'*1000)"
 - 高優先度のパスにpermissionなし
 - 低優先度のパスにpermissionあり
 - 低優先度のパスにpermissionなし
+- 100万1文字のinfileでパイプが詰まらないことのテストをする。
 
 ## 正常系
 - main関数を作成する。

@@ -201,3 +201,51 @@ TEST(pipex, no_env_path)
     system("< infile grep ab | wc -l -c > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
 }
+
+TEST(pipex, fd_pipe_max_plus_1)
+{
+    // NOTE: ulimitの上限と違うぞ。
+    system("python -c \"print('a'* 256 * 256)\" > infile");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "cat", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+
+    unlink("actual");
+    unlink("expected");
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile cat | cat > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+}
+
+TEST(pipex, fd_pipe_max)
+{
+    // NOTE: ulimitの上限と違うぞ。
+    system("python -c \"print('a'* 256 * 255)\" > infile");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "cat", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+
+    unlink("actual");
+    unlink("expected");
+    ASSERT_EQ(pipex(argc, argv, env), 0);
+    system("< infile cat | cat > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+}
