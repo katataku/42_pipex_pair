@@ -149,16 +149,20 @@ TEST(pipex, abnormal_outfile)
     int argc = 5;
     char *argv[] = {"./main", "infile", "/bin/ls", "/bin/cat", "vacant/outfile", NULL};
     char *env[] = {NULL};
+    int actual_status_code;
+    int expect_status_code;
+    
 
     unlink("actual");
     unlink("expected");
     testing::internal::CaptureStderr();
-    ASSERT_EQ(pipex(argc, argv, env), 0);
+    actual_status_code = pipex(argc, argv, env);
 	actual_stderr = testing::internal::GetCapturedStderr();
 
     testing::internal::CaptureStderr();
-    system("< infile ls | cat > vacant/outfile");
+    expect_status_code = system("< infile ls | cat > vacant/outfile");
     testing::internal::GetCapturedStderr();
+    ASSERT_EQ(actual_status_code, expect_status_code);
     ASSERT_EQ(expect_stderr, actual_stderr);
 }
 
@@ -248,4 +252,56 @@ TEST(pipex, fd_pipe_max)
     ASSERT_EQ(pipex(argc, argv, env), 0);
     system("< infile cat | cat > expected");
     ASSERT_EQ(system("diff actual expected"), 0);
+}
+
+TEST(pipex, false_case)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+	std::string expect_stderr = "";
+	std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/usr/bin/true", "/usr/bin/false", "outfile", NULL};
+    char *env[] = {NULL};
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+	actual_stderr = testing::internal::GetCapturedStderr();
+
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< infile true | false > outfile");
+    testing::internal::GetCapturedStderr();
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(expect_stderr, actual_stderr);
+}
+
+TEST(pipex, true_case)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+	std::string expect_stderr = "";
+	std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/usr/bin/false", "/usr/bin/true", "outfile", NULL};
+    char *env[] = {NULL};
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+	actual_stderr = testing::internal::GetCapturedStderr();
+
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< infile false | true > outfile");
+    testing::internal::GetCapturedStderr();
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(expect_stderr, actual_stderr);
 }

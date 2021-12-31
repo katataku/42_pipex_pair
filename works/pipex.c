@@ -140,7 +140,7 @@ int	pipex(int argc, char **argv, char **env)
 	}
 	waitpid(pid[0], &status[0], 0);
 	waitpid(pid[1], &status[1], 0);
-	return (0);
+	return (status[1]);
 }
 
 /*
@@ -162,8 +162,6 @@ int pipex(void)
 /* タスクリスト
 
 次回は、
-- メイン関数の終了ステータス パイプの終了ステータス echo $? bash man
-
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
 - 「ファイルアクセスのエラー」と「execveのエラー」のエラー、どちらのエラーを出力するかの優先順位
