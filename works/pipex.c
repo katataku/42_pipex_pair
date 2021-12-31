@@ -130,7 +130,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid[1] = fork();
 	if (pid[1] == 0)
 	{
-		fd = open(argv[4], O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+		fd = open(argv[4], O_RDWR | O_CREAT, 0644);
 		if (fd < 0)
 		{
 			perror(argv[4]);
@@ -160,8 +160,11 @@ int pipex(void)
 // }
 
 /* タスクリスト
-
 次回は、
+- ファイル作成されるときのパーミッションを合わせる
+	- すでに存在するファイル（書き込み権限あり）に書き込む
+	- すでに存在するファイル（書き込み権限なし）に書き込む
+
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
 - 「ファイルアクセスのエラー」と「execveのエラー」のエラー、どちらのエラーを出力するかの優先順位
@@ -180,7 +183,6 @@ int pipex(void)
 	- 引数が多い。
 - fdのクローズ
 	- 変に残ってるFDがないかを最後にチェックする。
-- ファイル作成されるときのパーミッションを合わせる
 
 ## 異常系
 - file1がパーミッションエラー
@@ -195,4 +197,6 @@ get_commandの異常系。
 - 異常系の動作確認も踏まえて
 - PATHがない場合 bash: ./fasdfa: No such file or directory
 - コマンドが見つからない場合 bash: ojoa: command not found
+
+sudo権限で実行した
 */

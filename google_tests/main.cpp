@@ -305,3 +305,31 @@ TEST(pipex, true_case)
     ASSERT_EQ(actual_status_code, expect_status_code);
     ASSERT_EQ(expect_stderr, actual_stderr);
 }
+
+TEST(pipex, permission)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+	std::string expect_stderr = "";
+	std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/usr/bin/false", "/usr/bin/true", "actual", NULL};
+    char *env[] = {NULL};
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+	actual_stderr = testing::internal::GetCapturedStderr();
+    system("ls -l actual | awk '{print $1}' > actual_permission");
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< infile false | true > expected");
+    testing::internal::GetCapturedStderr();
+    system("ls -l expected | awk '{print $1}'> expect_permission");
+    ASSERT_EQ(system("diff actual_permission expect_permission"), 0);
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(expect_stderr, actual_stderr);
+}
