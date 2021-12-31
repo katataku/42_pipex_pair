@@ -118,7 +118,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid[0] = fork();
 	if (pid[0] == 0)
 	{
-		fd = open(argv[1], O_RDWR, S_IREAD);
+		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
 		{
 			perror(argv[1]);
@@ -130,7 +130,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid[1] = fork();
 	if (pid[1] == 0)
 	{
-		fd = open(argv[4], O_RDWR | O_CREAT, 0644);
+		fd = open(argv[4], O_WRONLY | O_CREAT, 0644);
 		if (fd < 0)
 		{
 			perror(argv[4]);
@@ -160,10 +160,6 @@ int pipex(void)
 // }
 
 /* タスクリスト
-次回は、
-- ファイル作成されるときのパーミッションを合わせる
-	- すでに存在するファイル（書き込み権限あり）に書き込む
-	- すでに存在するファイル（書き込み権限なし）に書き込む
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
@@ -185,9 +181,6 @@ int pipex(void)
 	- 変に残ってるFDがないかを最後にチェックする。
 
 ## 異常系
-- file1がパーミッションエラー
-- file2がパーミッションエラー
-
 - 子プロセスが異常した時のハンドリング
 - コマンドが見つからないケース
 - システムコールのエラーハンドリング
@@ -197,6 +190,4 @@ get_commandの異常系。
 - 異常系の動作確認も踏まえて
 - PATHがない場合 bash: ./fasdfa: No such file or directory
 - コマンドが見つからない場合 bash: ojoa: command not found
-
-sudo権限で実行した
 */
