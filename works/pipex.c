@@ -140,6 +140,8 @@ int	pipex(int argc, char **argv, char **env)
 	}
 	waitpid(pid[0], &status[0], 0);
 	waitpid(pid[1], &status[1], 0);
+	sleep(1);
+	dprintf(2, "new fd: %d\n",open(argv[1], O_RDONLY));
 	return (status[1]);
 }
 
@@ -152,14 +154,25 @@ int pipex(void)
 }
 */
 
-// int main(int argc, char **argv, char **env)
-// {
-//     //if (check_args(argc,argv,env) == -1)
-//     //    return (-1);
-//     return pipex(argc,argv,env);
-// }
+ int main(int argc, char **argv, char **env)
+ {
+     //if (check_args(argc,argv,env) == -1)
+     //    return (-1);
+     return pipex(argc,argv,env);
+ }
 
 /* タスクリスト
+Next: 
+	- fdが空いているのでcloseする
+
+## 正常系
+
+- check_args関数を作成する。
+	- 引数が足りない。
+	- 引数が多い。
+- main関数を作成する。
+- fdのクローズ
+	- 変に残ってるFDがないかを最後にチェックする。
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
@@ -171,14 +184,6 @@ int pipex(void)
 - 高優先度のパスにpermissionなし
 - 低優先度のパスにpermissionあり
 - 低優先度のパスにpermissionなし
-
-## 正常系
-- main関数を作成する。
-- check_args関数を作成する。
-	- 引数が足りない。
-	- 引数が多い。
-- fdのクローズ
-	- 変に残ってるFDがないかを最後にチェックする。
 
 ## 異常系
 - 子プロセスが異常した時のハンドリング
