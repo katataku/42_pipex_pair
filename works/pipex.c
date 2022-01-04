@@ -114,6 +114,7 @@ int	pipex(int argc, char **argv, char **env)
 	int		fd;
 	int		status[2];
 
+	(void)argc;
 	pipe(filedes);
 	pid[0] = fork();
 	if (pid[0] == 0)
@@ -144,33 +145,13 @@ int	pipex(int argc, char **argv, char **env)
 	return (status[1]);
 }
 
-/*
-int pipex(void)
-{
-    do_command(command,in_fd, out_fd);   
-    retudorn (0);
-
-}
-*/
-
- int main(int argc, char **argv, char **env)
- {
-     //if (check_args(argc,argv,env) == -1)
-     //    return (-1);
-     return (pipex(argc,argv,env));
- }
-
 /* タスクリスト
 Next: 
 
 ## 正常系
-
 - check_args関数を作成する。
 	- 引数が足りない。
 	- 引数が多い。
-- main関数を作成する。
-- fdのクローズ
-	- 変に残ってるFDがないかを最後にチェックする。
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)

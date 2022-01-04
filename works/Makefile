@@ -1,7 +1,7 @@
 NAME = pipex
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-SRCS = pipex.c
+SRCS = main.c pipex.c
 OBJS = $(SRCS:%.c=%.o)
 SRCS_BONUS =
 OBJS_BONUS =
