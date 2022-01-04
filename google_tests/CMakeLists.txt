@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB LIBFT "../works/libft/*.c")
 
+include_directories("../works/libft")
+
 add_library(pipex
   STATIC
   ../works/pipex.c
