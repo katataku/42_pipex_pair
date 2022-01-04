@@ -147,11 +147,10 @@ int	pipex(int argc, char **argv, char **env)
 
 /* タスクリスト
 Next: 
-
-## 正常系
 - check_args関数を作成する。
 	- 引数が足りない。
 	- 引数が多い。
+- 提出に向けてnorm対応
 
 ## 検証
 - 環境変数にPATHがない場合(検証が大変そう)
