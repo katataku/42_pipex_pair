@@ -138,10 +138,9 @@ int	pipex(int argc, char **argv, char **env)
 		}
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	}
+	close(filedes[READ_INDEX]);
 	waitpid(pid[0], &status[0], 0);
 	waitpid(pid[1], &status[1], 0);
-	sleep(1);
-	dprintf(2, "new fd: %d\n",open(argv[1], O_RDONLY));
 	return (status[1]);
 }
 
@@ -158,12 +157,11 @@ int pipex(void)
  {
      //if (check_args(argc,argv,env) == -1)
      //    return (-1);
-     return pipex(argc,argv,env);
+     return (pipex(argc,argv,env));
  }
 
 /* タスクリスト
 Next: 
-	- fdが空いているのでcloseする
 
 ## 正常系
 
