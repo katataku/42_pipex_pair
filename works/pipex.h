@@ -13,5 +13,5 @@
 
 char	*get_command(char *file_name, char **env);
 int		pipex(int argc, char **argv, char **env);
-
+int     is_valid_args(int argc, char **argv);
 #endif

@@ -190,7 +190,7 @@ TEST(pipex, resolve_path)
     ASSERT_EQ(system("diff actual expected"), 0);
 }
 
-TEST(pipex, no_env_path)
+TEST(DISABLED_pipex, no_env_path)
 {
     system("echo bc > infile");
     system("echo ab >> infile");
@@ -332,4 +332,28 @@ TEST(pipex, permission)
     ASSERT_EQ(system("diff actual_permission expect_permission"), 0);
     ASSERT_EQ(actual_status_code, expect_status_code);
     ASSERT_EQ(expect_stderr, actual_stderr);
+}
+
+TEST(check_args, ok_normal)
+{
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "/bin/pwd", "/bin/pwd", "actual", NULL};
+
+    ASSERT_EQ(is_valid_args(argc,argv), 1);
+}
+
+TEST(check_args, ng_argc_less)
+{
+    int argc = 4;
+    char *argv[] = {"./main", "infile", "/bin/pwd", "/bin/pwd", NULL};
+
+    ASSERT_EQ(is_valid_args(argc,argv), 0);
+}
+
+TEST(check_args, ng_argc_more)
+{
+    int argc = 6;
+    char *argv[] = {"./main", "infile", "/bin/pwd", "/bin/pwd", "actual", "a", NULL};
+
+    ASSERT_EQ(is_valid_args(argc,argv), 0);
 }

@@ -1,5 +1,11 @@
 #include "pipex.h"
 
+int	is_valid_args(int argc, char **argv)
+{
+	(void)argv;
+	return (argc == 5);
+}
+
 void	safely_dup(int fd, int tar_fd)
 {
 	if (dup2(fd, tar_fd) < 0)
