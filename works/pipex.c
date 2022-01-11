@@ -6,14 +6,14 @@ int	is_valid_args(int argc, char **argv)
 	return (argc == 5);
 }
 
-void	safely_dup(int fd, int tar_fd)
+void	replace_fd(int old_fd, int new_fd)
 {
-	if (dup2(fd, tar_fd) < 0)
+	if (dup2(old_fd, new_fd) < 0)
 	{
 		perror("dup2");
 		exit (1);
 	}
-	if (close(fd) < 0)
+	if (close(old_fd) < 0)
 	{
 		perror("close");
 		exit (1);
@@ -68,45 +68,14 @@ char	*get_command(char *file_name, char **env)
 	exit(1);
 }
 
-//char*	get_command (file_name, env)
-//{
-//	//errorはexit
-
-//	// 例外ケース。PATHがない。
-//	// envからPATHを探す
-//	int	index = 0;
-//	while (True)
-//	{
-//		if (env[i] == NULL)
-//			return 'ありまえｓん'
-//		if (ft_strncmp("PATH=", env[i], 5);
-//			break;
-//		i++;
-//		env[i] + 5
-//	}
-//	// PATHを分割
-//	path = ft_split(env[i]+5, ':');
-//	i = 0;
-//	while (path[i] != NULL)
-//	{
-//		// PATHとコマンドをくっつける
-//		fullpath = ft_strjoin(path[i],file_name);
-//		// accessをつかって権限やファイルなどがあるか
-//		access(fullpath,XX);
-//		if (OK)
-//			return 
-//		return get_command(filename,next(env));
-//	}
-//}
-
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
 	char	**argv;
 	char	*command;
 
 	argv = ft_split(path, ' ');
-	safely_dup(read_fd, 0);
-	safely_dup(write_fd, 1);
+	replace_fd(read_fd, 0);
+	replace_fd(write_fd, 1);
 	command = get_command(argv[0], env);
 	execve(command, argv, env);
 	perror("execve");
