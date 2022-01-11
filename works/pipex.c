@@ -122,28 +122,23 @@ int	pipex(int argc, char **argv, char **env)
 
 /* タスクリスト
 Next: 
-- check_args関数を作成する。
-	- 引数が足りない。
-	- 引数が多い。
+- システムコールのエラーハンドリング
+	* fork
+	* pipe
+	* close
+	* waitpid
+	* access
+- 文字列関数のallocateエラー
+	* ft_splitなどのNULLのケース
 - 提出に向けてnorm対応
 
-## 検証
-- 環境変数にPATHがない場合(検証が大変そう)
-- 「ファイルアクセスのエラー」と「execveのエラー」のエラー、どちらのエラーを出力するかの優先順位
-
-## テストケース
-- setup/teardownの作成
-- 高優先度のパスにpermissionあり
-- 高優先度のパスにpermissionなし
-- 低優先度のパスにpermissionあり
-- 低優先度のパスにpermissionなし
+方針：
+	関数を意味ある単位に分割して真正面からシステムコールと対峙する。
+	辛くなったらシステムコールのラッパー関数で逃げる。
 
 ## 異常系
 - 子プロセスが異常した時のハンドリング
 - コマンドが見つからないケース
-- システムコールのエラーハンドリング
-	- fork
-	- e.t.c.
 get_commandの異常系。
 - 異常系の動作確認も踏まえて
 - PATHがない場合 bash: ./fasdfa: No such file or directory
