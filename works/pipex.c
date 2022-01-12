@@ -98,7 +98,7 @@ int	pipex(int argc, char **argv, char **env)
 		if (fd < 0)
 		{
 			perror(argv[1]);
-			exit(1);
+			exit(1); // 終了ステータス127かもあってる？
 		}
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
@@ -131,6 +131,7 @@ Next:
 - 文字列関数のallocateエラー
 	* ft_splitなどのNULLのケース
 - 提出に向けてnorm対応
+- 追記：ファイルのopenに失敗したときの終了ステータスが違うかも。1ではなく127
 
 方針：
 	関数を意味ある単位に分割して真正面からシステムコールと対峙する。
