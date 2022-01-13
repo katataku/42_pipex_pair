@@ -11,12 +11,12 @@ void	replace_fd(int old_fd, int new_fd)
 	if (dup2(old_fd, new_fd) < 0)
 	{
 		perror("dup2");
-		exit (1);
+		exit (ERR_CODE_GENERAL);
 	}
 	if (close(old_fd) < 0)
 	{
 		perror("close");
-		exit (1);
+		exit (ERR_CODE_GENERAL);
 	}
 }
 
@@ -45,7 +45,7 @@ char	*get_command(char *file_name, char **env)
 	file_name_with_slash = ft_strjoin("/", file_name);
 	if (file_name_with_slash == NULL)
 	{
-		exit (1);
+		exit (ERR_CODE_GENERAL);
 	}
 	index = 0;
 	while (path[index] != NULL)
@@ -65,7 +65,7 @@ char	*get_command(char *file_name, char **env)
 		index++;
 	}
 	write(2, "commnd not found ", 15);
-	exit(1);
+	exit(ERR_CODE_COMMAND_NOT_FOUND);
 }
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
@@ -144,4 +144,8 @@ get_commandの異常系。
 - 異常系の動作確認も踏まえて
 - PATHがない場合 bash: ./fasdfa: No such file or directory
 - コマンドが見つからない場合 bash: ojoa: command not found
+
+終了ステータス
+126	コマンドを実行できなかった（実行権限がなかった）
+127	コマンドが見つからなかった
 */

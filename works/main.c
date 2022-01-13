@@ -3,6 +3,6 @@
 int	main(int argc, char **argv, char **env)
 {
 	if (!is_valid_args(argc, argv))
-		return (1);
+		return (ERR_CODE_GENERAL);
 	return (pipex(argc, argv, env));
 }

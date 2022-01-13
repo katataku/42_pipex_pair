@@ -11,6 +11,10 @@
 # define READ_INDEX 0
 # define WRITE_INDEX 1
 
+# define ERR_CODE_GENERAL 1
+# define ERR_CODE_CAN_NOT_EXECUTE 126
+# define ERR_CODE_COMMAND_NOT_FOUND 127
+
 char	*get_command(char *file_name, char **env);
 int		pipex(int argc, char **argv, char **env);
 int     is_valid_args(int argc, char **argv);

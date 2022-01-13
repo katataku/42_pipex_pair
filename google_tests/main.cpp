@@ -190,21 +190,6 @@ TEST(pipex, resolve_path)
     ASSERT_EQ(system("diff actual expected"), 0);
 }
 
-TEST(DISABLED_pipex, no_env_path)
-{
-    system("echo bc > infile");
-    system("echo ab >> infile");
-
-    int argc = 5;
-    char *argv[] = {"./main", "infile", "grep ab", "wc -l -c", "actual", NULL};
-    char *env[] = {NULL};
-
-    unlink("actual");
-    unlink("expected");
-    ASSERT_EQ(pipex(argc, argv, env), 0);
-    system("< infile grep ab | wc -l -c > expected");
-    ASSERT_EQ(system("diff actual expected"), 0);
-}
 
 TEST(pipex, fd_pipe_max_plus_1)
 {
@@ -332,6 +317,66 @@ TEST(pipex, permission)
     ASSERT_EQ(system("diff actual_permission expect_permission"), 0);
     ASSERT_EQ(actual_status_code, expect_status_code);
     ASSERT_EQ(expect_stderr, actual_stderr);
+}
+
+TEST(pipex, command_not_found)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "dog", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+    actual_status_code = pipex(argc, argv, env);
+    expect_status_code = system("< infile cat | dog > expected");
+    ASSERT_EQ(system("diff actual expected"), 0);
+    printf("%d\n: expect_status_code");
+    ASSERT_EQ(actual_status_code, expect_status_code);
+}
+
+TEST(pipex, command_not_execute)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+    system("cp /bin/cat dog");
+    system("chmod 644 dog");
+
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "./dog", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+
+    actual_status_code = pipex(argc, argv, env);
+    expect_status_code = system("< infile cat | ./dog > expected");
+    system("rm dog");
+    ASSERT_EQ(system("diff actual expected"), 0);
+    printf("%d\n: expect_status_code");
+    ASSERT_EQ(actual_status_code, expect_status_code);
 }
 
 TEST(check_args, ok_normal)
