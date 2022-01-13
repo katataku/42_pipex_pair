@@ -64,7 +64,8 @@ char	*get_command(char *file_name, char **env)
 		free(fullpath);
 		index++;
 	}
-	write(2, "commnd not found ", 15);
+	ft_putstr_fd(file_name, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	exit(ERR_CODE_COMMAND_NOT_FOUND);
 }
 
@@ -72,7 +73,7 @@ void	exit_when_not_executable(char *command)
 {
 	if (access(command, X_OK) == -1)
 	{
-		write(2, "commnd cannot execute", 15);
+		perror(command);
 		exit(ERR_CODE_CAN_NOT_EXECUTE);
 	}
 }
@@ -141,7 +142,6 @@ Next:
 - 文字列関数のallocateエラー
 	* ft_splitなどのNULLのケース
 - 提出に向けてnorm対応
-- 追記：ファイルのopenに失敗したときの終了ステータスが違うかも。1ではなく127
 
 方針：
 	関数を意味ある単位に分割して真正面からシステムコールと対峙する。
@@ -152,10 +152,4 @@ Next:
 - コマンドが見つからないケース
 get_commandの異常系。
 - 異常系の動作確認も踏まえて
-- PATHがない場合 bash: ./fasdfa: No such file or directory
-- コマンドが見つからない場合 bash: ojoa: command not found
-
-終了ステータス
-126	コマンドを実行できなかった（実行権限がなかった）
-127	コマンドが見つからなかった
 */

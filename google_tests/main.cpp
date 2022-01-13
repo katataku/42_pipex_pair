@@ -324,6 +324,8 @@ TEST(pipex, command_not_found)
     system("echo bc > infile");
     system("echo ab >> infile");
 
+    std::string expect_stderr;
+    std::string actual_stderr;
     int argc = 5;
     char *argv[] = {"./main", "infile", "cat", "dog", "actual", NULL};
     char *env[] = {
@@ -340,11 +342,15 @@ TEST(pipex, command_not_found)
 
     unlink("actual");
     unlink("expected");
+    testing::internal::CaptureStderr();
     actual_status_code = pipex(argc, argv, env);
+    actual_stderr = testing::internal::GetCapturedStderr();
+    testing::internal::CaptureStderr();
     expect_status_code = system("< infile cat | dog > expected");
+    expect_stderr = testing::internal::GetCapturedStderr();
     ASSERT_EQ(system("diff actual expected"), 0);
-    printf("%d\n: expect_status_code");
     ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
 }
 
 TEST(pipex, command_not_execute)
@@ -354,6 +360,8 @@ TEST(pipex, command_not_execute)
     system("cp /bin/cat dog");
     system("chmod 644 dog");
 
+    std::string expect_stderr = "vacant/outfile: No such file or directory\n";
+    std::string actual_stderr;
     int argc = 5;
     char *argv[] = {"./main", "infile", "cat", "./dog", "actual", NULL};
     char *env[] = {
@@ -371,12 +379,18 @@ TEST(pipex, command_not_execute)
     unlink("actual");
     unlink("expected");
 
+    testing::internal::CaptureStderr();
     actual_status_code = pipex(argc, argv, env);
+    actual_stderr = testing::internal::GetCapturedStderr();
+
+    testing::internal::CaptureStderr();
     expect_status_code = system("< infile cat | ./dog > expected");
     system("rm dog");
+    expect_stderr = testing::internal::GetCapturedStderr();
+
     ASSERT_EQ(system("diff actual expected"), 0);
-    printf("%d\n: expect_status_code");
     ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
 }
 
 TEST(check_args, ok_normal)
