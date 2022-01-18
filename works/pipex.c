@@ -8,16 +8,8 @@ int	is_valid_args(int argc, char **argv)
 
 void	replace_fd(int old_fd, int new_fd)
 {
-	if (dup2(old_fd, new_fd) < 0)
-	{
-		perror("dup2");
-		exit (ERR_CODE_GENERAL);
-	}
-	if (close(old_fd) < 0)
-	{
-		perror("close");
-		exit (ERR_CODE_GENERAL);
-	}
+	xdup2(old_fd, new_fd);
+	xclose(old_fd);
 }
 
 char	*get_command(char *file_name, char **env)
@@ -125,34 +117,28 @@ int	pipex(int argc, char **argv, char **env)
 	int		status[2];
 
 	(void)argc;
-	pipe(filedes);
-	pid[0] = fork();
+	xpipe(filedes);
+	pid[0] = xfork();
 	if (pid[0] == 0)
 	{
 		fd = xopen(argv[1], O_RDONLY, 0);
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
-	close(filedes[WRITE_INDEX]);
-	pid[1] = fork();
+	xclose(filedes[WRITE_INDEX]);
+	pid[1] = xfork();
 	if (pid[1] == 0)
 	{
 		fd = xopen(argv[4], O_WRONLY | O_CREAT, 0644);
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	}
-	close(filedes[READ_INDEX]);
-	waitpid(pid[0], &status[0], 0);
-	waitpid(pid[1], &status[1], 0);
+	xclose(filedes[READ_INDEX]);
+	xwaitpid(pid[0], &status[0], 0);
+	xwaitpid(pid[1], &status[1], 0);
 	return (status[1]);
 }
 
 /* タスクリスト
 Next: 
-- システムコールのエラーハンドリング
-	* fork
-	* pipe
-	* close
-	* waitpid
-	* access
 - 文字列関数のallocateエラー
 	* ft_splitなどのNULLのケース
 - 提出に向けてnorm対応

@@ -2,7 +2,7 @@ NAME = pipex
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 XSYSCALL_SRCS = $(addprefix srcs/xsyscall/, \
-		xopen.c \
+		xclose.c xfork.c xopen.c xpipe.c xwaitpid.c xdup2.c \
 		)
 SRCS = main.c pipex.c $(XSYSCALL_SRCS)
 OBJS = $(SRCS:%.c=%.o)
