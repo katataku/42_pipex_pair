@@ -55,11 +55,32 @@ char	*get_command(char *file_name, char **env)
 		{
 			exit(1);
 		}
-		access_check = access(fullpath, F_OK);
+		access_check = access(fullpath, X_OK);
 		if (access_check == 0)
 		{
 			free(file_name_with_slash);
 			return (fullpath);
+		}
+		free(fullpath);
+		index++;
+	}
+	index = 0;
+	while (path[index] != NULL)
+	{
+		fullpath = ft_strjoin(path[index], file_name_with_slash);
+		if (fullpath == NULL)
+		{
+			exit(1);
+		}
+		access_check = access(fullpath, F_OK);
+		if (access_check == 0)
+		{
+			free(file_name_with_slash);
+			ft_putstr_fd(fullpath, 2);
+			ft_putstr_fd(": ", 2);
+			ft_putstr_fd(strerror(EACCES), 2);
+			ft_putstr_fd("\n", 2);
+			exit(ERR_CODE_CAN_NOT_EXECUTE);
 		}
 		free(fullpath);
 		index++;

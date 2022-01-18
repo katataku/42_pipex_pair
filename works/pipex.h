@@ -8,6 +8,7 @@
 # include <sys/types.h>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <sys/errno.h>
 # define READ_INDEX 0
 # define WRITE_INDEX 1
 

@@ -403,7 +403,7 @@ TEST(pipex, first_is_not_executable_second_is_executable)
     system("chmod 644 /tmp/first/cat2");
     system("cp /bin/cat /tmp/second/cat2");
 
-    std::string expect_stderr = "vacant/outfile: No such file or directory\n";
+    std::string expect_stderr;
     std::string actual_stderr;
     int argc = 5;
     char *argv[] = {"./main", "infile", "/bin/cat", "cat2", "actual", NULL};
@@ -424,14 +424,13 @@ TEST(pipex, first_is_not_executable_second_is_executable)
 
     testing::internal::CaptureStderr();
     expect_status_code = system("PATH='/tmp/first:/tmp/second' ; < infile /bin/cat | cat2 > expected");
-
     expect_stderr = testing::internal::GetCapturedStderr();
 
     system("rm -rf /tmp/first");
     system("rm -rf /tmp/second");
     ASSERT_EQ(system("diff actual expected"), 0);
     ASSERT_EQ(actual_status_code, expect_status_code);
-    ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
+    ASSERT_EQ(actual_stderr, expect_stderr);
 }
 
 TEST(pipex, both_not_executable)
@@ -445,7 +444,7 @@ TEST(pipex, both_not_executable)
     system("cp /bin/cat /tmp/second/cat2");
     system("chmod 644 /tmp/second/cat2");
 
-    std::string expect_stderr = "vacant/outfile: No such file or directory\n";
+    std::string expect_stderr;
     std::string actual_stderr;
     int argc = 5;
     char *argv[] = {"./main", "infile", "/bin/cat", "cat2", "actual", NULL};
@@ -466,7 +465,6 @@ TEST(pipex, both_not_executable)
 
     testing::internal::CaptureStderr();
     expect_status_code = system("PATH='/tmp/first:/tmp/second' ; < infile /bin/cat | cat2 > expected");
-
     expect_stderr = testing::internal::GetCapturedStderr();
 
     system("rm -rf /tmp/first");
