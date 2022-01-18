@@ -99,7 +99,7 @@ TEST(get_command, has_slash)
     ASSERT_STREQ(get_command("/bin/ls", env), "/bin/ls");
 }
 
-TEST(get_command, has_slash2)
+TEST(DISABLED_get_command, has_slash2)
 {
     char *env[] = {
         "LANG=ja_JP.UTF-8",
@@ -547,6 +547,7 @@ TEST(pipex, both_not_executable)
     ASSERT_EQ(actual_status_code, expect_status_code);
     ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
 }
+
 TEST(check_args, ok_normal)
 {
     int argc = 5;

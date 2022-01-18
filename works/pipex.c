@@ -31,7 +31,20 @@ char	*get_command(char *file_name, char **env)
 	index = 0;
 	if (ft_strchr(file_name, '/') != NULL)
 	{
-		return (file_name);
+		access_check = access(file_name, X_OK);
+		if (access_check == 0)
+			return (file_name);
+		access_check = access(file_name, F_OK);
+		if (access_check == 0)
+		{
+			ft_putstr_fd(file_name, 2);
+			ft_putstr_fd(": ", 2);
+			ft_putstr_fd(strerror(EACCES), 2);
+			ft_putstr_fd("\n", 2);
+			exit(ERR_CODE_CAN_NOT_EXECUTE);
+		}
+		perror(file_name);
+		exit(ERR_CODE_COMMAND_NOT_FOUND);
 	}
 	while (1)
 	{
