@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 extern "C" {
-#include "../works/pipex.h"
+#include "pipex.h"
 }
 
 TEST(pipex, pwd_pwd)
