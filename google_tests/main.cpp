@@ -319,7 +319,7 @@ TEST(pipex, permission)
     ASSERT_EQ(expect_stderr, actual_stderr);
 }
 
-TEST(pipex, command_not_found)
+TEST(pipex, command_not_found_with_command)
 {
     system("echo bc > infile");
     system("echo ab >> infile");
@@ -353,7 +353,81 @@ TEST(pipex, command_not_found)
     ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
 }
 
-TEST(pipex, command_not_execute)
+TEST(pipex, command_not_found_with_fullpath)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+
+    std::string expect_stderr;
+    std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "./dog", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+    actual_stderr = testing::internal::GetCapturedStderr();
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< infile cat | ./dog > expected");
+    expect_stderr = testing::internal::GetCapturedStderr();
+    ASSERT_EQ(system("diff actual expected"), 0);
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
+}
+
+TEST(pipex, command_not_execute_with_command)
+{
+    system("echo bc > infile");
+    system("echo ab >> infile");
+    system("cp /bin/cat dog");
+    system("chmod 644 dog");
+
+    std::string expect_stderr = "vacant/outfile: No such file or directory\n";
+    std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "infile", "cat", "dog", "actual", NULL};
+    char *env[] = {
+        "LANG=ja_JP.UTF-8",
+        "HOME=/Users/hayashi-ay",
+        "SHELL=/bin/bash",
+        "PS1=\h\[\033[00m\]:\W\[\033[31m\]$(__git_ps1 [%s])\[\033[00m\]\$",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        "COLORTERM=truecolor",
+        NULL
+    };
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+    actual_stderr = testing::internal::GetCapturedStderr();
+
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< infile cat | dog > expected");
+    system("rm dog");
+    expect_stderr = testing::internal::GetCapturedStderr();
+
+    ASSERT_EQ(system("diff actual expected"), 0);
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
+}
+
+TEST(pipex, command_not_execute_with_fullpath)
 {
     system("echo bc > infile");
     system("echo ab >> infile");

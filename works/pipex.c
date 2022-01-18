@@ -90,15 +90,6 @@ char	*get_command(char *file_name, char **env)
 	exit(ERR_CODE_COMMAND_NOT_FOUND);
 }
 
-void	exit_when_not_executable(char *command)
-{
-	if (access(command, X_OK) == -1)
-	{
-		perror(command);
-		exit(ERR_CODE_CAN_NOT_EXECUTE);
-	}
-}
-
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
 	char	**argv;
@@ -108,10 +99,9 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 	replace_fd(read_fd, 0);
 	replace_fd(write_fd, 1);
 	command = get_command(argv[0], env);
-	exit_when_not_executable(command);
 	execve(command, argv, env);
 	perror("execve");
-	exit(0);
+	exit(ERR_CODE_GENERAL);
 }
 
 int	pipex(int argc, char **argv, char **env)
