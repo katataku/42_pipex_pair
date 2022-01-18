@@ -9,6 +9,8 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <sys/errno.h>
+# include <string.h>
+# include "xsyscall.h"
 # define READ_INDEX 0
 # define WRITE_INDEX 1
 
@@ -18,5 +20,5 @@
 
 char	*get_command(char *file_name, char **env);
 int		pipex(int argc, char **argv, char **env);
-int     is_valid_args(int argc, char **argv);
+int		is_valid_args(int argc, char **argv);
 #endif

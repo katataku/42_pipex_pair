@@ -129,24 +129,14 @@ int	pipex(int argc, char **argv, char **env)
 	pid[0] = fork();
 	if (pid[0] == 0)
 	{
-		fd = open(argv[1], O_RDONLY);
-		if (fd < 0)
-		{
-			perror(argv[1]);
-			exit(1); // 終了ステータス127かもあってる？
-		}
+		fd = xopen(argv[1], O_RDONLY, 0);
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}
 	close(filedes[WRITE_INDEX]);
 	pid[1] = fork();
 	if (pid[1] == 0)
 	{
-		fd = open(argv[4], O_WRONLY | O_CREAT, 0644);
-		if (fd < 0)
-		{
-			perror(argv[4]);
-			exit(1);
-		}
+		fd = xopen(argv[4], O_WRONLY | O_CREAT, 0644);
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	}
 	close(filedes[READ_INDEX]);
