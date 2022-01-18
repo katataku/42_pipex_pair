@@ -12,6 +12,18 @@ void	replace_fd(int old_fd, int new_fd)
 	xclose(old_fd);
 }
 
+void	puterr(char *target, char *message)
+{
+	if (ft_putstr_fd(target, 2) == -1)
+		exit(1);
+	if (ft_putstr_fd(": ", 2) == -1)
+		exit(1);
+	if (ft_putstr_fd(message, 2) == -1)
+		exit(1);
+	if (ft_putstr_fd("\n", 2) == -1)
+		exit(1);
+}
+
 char	*get_command(char *file_name, char **env)
 {
 	int		index;
@@ -29,10 +41,7 @@ char	*get_command(char *file_name, char **env)
 		access_check = access(file_name, F_OK);
 		if (access_check == 0)
 		{
-			ft_putstr_fd(file_name, 2);
-			ft_putstr_fd(": ", 2);
-			ft_putstr_fd(strerror(EACCES), 2);
-			ft_putstr_fd("\n", 2);
+			puterr(file_name, strerror(EACCES));
 			exit(ERR_CODE_CAN_NOT_EXECUTE);
 		}
 		perror(file_name);
@@ -80,18 +89,13 @@ char	*get_command(char *file_name, char **env)
 		access_check = access(fullpath, F_OK);
 		if (access_check == 0)
 		{
-			free(file_name_with_slash);
-			ft_putstr_fd(fullpath, 2);
-			ft_putstr_fd(": ", 2);
-			ft_putstr_fd(strerror(EACCES), 2);
-			ft_putstr_fd("\n", 2);
+			puterr(fullpath, strerror(EACCES));
 			exit(ERR_CODE_CAN_NOT_EXECUTE);
 		}
 		free(fullpath);
 		index++;
 	}
-	ft_putstr_fd(file_name, 2);
-	ft_putstr_fd(": command not found\n", 2);
+	puterr(file_name, "command not found");
 	exit(ERR_CODE_COMMAND_NOT_FOUND);
 }
 
