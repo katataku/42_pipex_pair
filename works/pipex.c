@@ -12,6 +12,19 @@ void	replace_fd(int old_fd, int new_fd)
 	xclose(old_fd);
 }
 
+char	*ft_xstrjoin(const char *s1, const char *s2)
+{
+	char	*fullpath;
+
+	fullpath = ft_strjoin(s1, s2);
+	if (fullpath == NULL)
+	{
+		perror("malloc");
+		exit(ERR_CODE_GENERAL);
+	}
+	return (fullpath);
+}
+
 void	puterr(char *target, char *message)
 {
 	if (ft_putstr_fd(target, 2) == -1)
@@ -75,20 +88,11 @@ char	*get_command(char *file_name, char **env)
 		exit(ERR_CODE_COMMAND_NOT_FOUND);
 	}
 	path = create_path_lst(env);
-	file_name_with_slash = ft_strjoin("/", file_name);
-	if (path == NULL || file_name_with_slash == NULL)
-	{
-		perror("malloc");
-		exit (ERR_CODE_GENERAL);
-	}
+	file_name_with_slash = ft_xstrjoin("/", file_name);
 	index = 0;
 	while (path[index] != NULL)
 	{
-		fullpath = ft_strjoin(path[index], file_name_with_slash);
-		if (fullpath == NULL)
-		{
-			exit(ERR_CODE_GENERAL);
-		}
+		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		access_check = access(fullpath, X_OK);
 		if (access_check == 0)
 		{
@@ -101,11 +105,7 @@ char	*get_command(char *file_name, char **env)
 	index = 0;
 	while (path[index] != NULL)
 	{
-		fullpath = ft_strjoin(path[index], file_name_with_slash);
-		if (fullpath == NULL)
-		{
-			exit(ERR_CODE_GENERAL);
-		}
+		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		access_check = access(fullpath, F_OK);
 		if (access_check == 0)
 		{
