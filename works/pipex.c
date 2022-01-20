@@ -40,7 +40,7 @@ char	*ft_xstrdup(const char *s)
 
 char	*ft_xsplit(const char *s, char c)
 {
-	char *tmp;
+	char	*tmp;
 
 	tmp = ft_split(s, c);
 	if (tmp == NULL)
@@ -53,7 +53,7 @@ char	*ft_xsplit(const char *s, char c)
 
 char	*ft_xcalloc(size_t count, size_t size)
 {
-	char *tmp;
+	char	*tmp;
 
 	tmp = ft_calloc(count, size);
 	if (tmp == NULL)
@@ -125,14 +125,9 @@ char	*get_command(char *file_name, char **env)
 	{
 		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		if (access(fullpath, X_OK) == 0)
-		{
-			free(file_exists);
-			free(file_name_with_slash);
 			return (fullpath);
-		}
 		if (file_exists == NULL && access(fullpath, F_OK) == 0)
 			file_exists = ft_xstrdup(fullpath);
-		free(fullpath);
 		index++;
 	}
 	if (file_exists != NULL)
