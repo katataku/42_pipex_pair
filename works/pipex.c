@@ -38,7 +38,7 @@ char	*ft_xstrdup(const char *s)
 	return (tmp);
 }
 
-void	puterr(char *target, char *message)
+void	puterr_exit(char *target, char *message, int exit_status)
 {
 	if (ft_putstr_fd(target, 2) == -1)
 		exit(ERR_CODE_GENERAL);
@@ -48,6 +48,7 @@ void	puterr(char *target, char *message)
 		exit(ERR_CODE_GENERAL);
 	if (ft_putstr_fd("\n", 2) == -1)
 		exit(ERR_CODE_GENERAL);
+	exit(exit_status);
 }
 
 char	**create_path_lst(char **env)
@@ -91,10 +92,7 @@ char	*get_command(char *file_name, char **env)
 		if (access(file_name, X_OK) == 0)
 			return (file_name);
 		if (access(file_name, F_OK) == 0)
-		{
-			puterr(file_name, strerror(EACCES));
-			exit(ERR_CODE_CAN_NOT_EXECUTE);
-		}
+			puterr_exit(file_name, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
 		perror(file_name);
 		exit(ERR_CODE_COMMAND_NOT_FOUND);
 	}
@@ -117,15 +115,9 @@ char	*get_command(char *file_name, char **env)
 		index++;
 	}
 	if (file_exists != NULL)
-	{
-		puterr(file_exists, strerror(EACCES));
-		exit(ERR_CODE_CAN_NOT_EXECUTE);
-	}
+		puterr_exit(file_exists, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
 	else
-	{
-		puterr(file_name, "command not found");
-		exit(ERR_CODE_COMMAND_NOT_FOUND);
-	}
+		puterr_exit(file_name, "command not found", ERR_CODE_COMMAND_NOT_FOUND);
 }
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
