@@ -106,7 +106,7 @@ char	*get_command(char *file_name, char **env)
 	char	**path;
 	char	*fullpath;
 	char	*file_name_with_slash;
-	char	*file_exists;
+	char	*found_filepath;
 
 	if (ft_strchr(file_name, '/') != NULL)
 	{
@@ -120,18 +120,18 @@ char	*get_command(char *file_name, char **env)
 	path = create_path_lst(env);
 	file_name_with_slash = ft_xstrjoin("/", file_name);
 	index = 0;
-	file_exists = NULL;
+	found_filepath = NULL;
 	while (path[index] != NULL)
 	{
 		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		if (access(fullpath, X_OK) == 0)
 			return (fullpath);
-		if (file_exists == NULL && access(fullpath, F_OK) == 0)
-			file_exists = ft_xstrdup(fullpath);
+		if (found_filepath == NULL && access(fullpath, F_OK) == 0)
+			found_filepath = ft_xstrdup(fullpath);
 		index++;
 	}
-	if (file_exists != NULL)
-		puterr_exit(file_exists, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
+	if (found_filepath != NULL)
+		puterr_exit(found_filepath, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
 	else
 		puterr_exit(file_name, "command not found", ERR_CODE_COMMAND_NOT_FOUND);
 	return (NULL);
