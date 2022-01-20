@@ -100,27 +100,26 @@ char	**create_path_lst(char **env)
 	return (path);
 }
 
-char	*get_command(char *file_name, char **env)
+char	*get_fullpath_find_from_path(char	*filepath)
+{
+	if (access(filepath, X_OK) == 0)
+			return (filepath);
+		if (access(filepath, F_OK) == 0)
+			puterr_exit(filepath, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
+		perror(filepath);
+		exit(ERR_CODE_COMMAND_NOT_FOUND);
+}
+
+char	*get_fullpath_find_from_command(char **path, char *file_name)
 {
 	int		index;
-	char	**path;
 	char	*fullpath;
 	char	*file_name_with_slash;
 	char	*found_filepath;
 
-	if (ft_strchr(file_name, '/') != NULL)
-	{
-		if (access(file_name, X_OK) == 0)
-			return (file_name);
-		if (access(file_name, F_OK) == 0)
-			puterr_exit(file_name, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
-		perror(file_name);
-		exit(ERR_CODE_COMMAND_NOT_FOUND);
-	}
-	path = create_path_lst(env);
-	file_name_with_slash = ft_xstrjoin("/", file_name);
 	index = 0;
 	found_filepath = NULL;
+	file_name_with_slash = ft_xstrjoin("/", file_name);
 	while (path[index] != NULL)
 	{
 		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
@@ -134,8 +133,50 @@ char	*get_command(char *file_name, char **env)
 		puterr_exit(found_filepath, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
 	else
 		puterr_exit(file_name, "command not found", ERR_CODE_COMMAND_NOT_FOUND);
-	return (NULL);
+	return (NULL);	
 }
+	
+char	*get_fullpath(char *file_name, char **env)
+{
+	char	**path;
+
+	if (ft_strchr(file_name, '/') != NULL)
+		return (get_fullpath_find_from_path(file_name));
+	path = create_path_lst(env);
+	return (get_fullpath_find_from_command(path, file_name));
+}
+
+//char	*get_command(char *file_name, char **env)
+//{
+//	int		index;
+//	char	**path;
+//	char	*fullpath;
+//	char	*file_name_with_slash;
+//	char	*found_filepath;
+
+//	if (ft_strchr(file_name, '/') != NULL)
+//	{
+//		return (get_fullpath_find_from_path(file_name));
+//	}
+//	path = create_path_lst(env);
+//	file_name_with_slash = ft_xstrjoin("/", file_name);
+//	index = 0;
+//	found_filepath = NULL;
+//	while (path[index] != NULL)
+//	{
+//		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
+//		if (access(fullpath, X_OK) == 0)
+//			return (fullpath);
+//		if (found_filepath == NULL && access(fullpath, F_OK) == 0)
+//			found_filepath = ft_xstrdup(fullpath);
+//		index++;
+//	}
+//	if (found_filepath != NULL)
+//		puterr_exit(found_filepath, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
+//	else
+//		puterr_exit(file_name, "command not found", ERR_CODE_COMMAND_NOT_FOUND);
+//	return (NULL);
+//}
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
 {
@@ -145,7 +186,7 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 	argv = ft_xsplit(path, ' ');
 	replace_fd(read_fd, 0);
 	replace_fd(write_fd, 1);
-	command = get_command(argv[0], env);
+	command = get_fullpath(argv[0], env);
 	execve(command, argv, env);
 	perror("execve");
 	exit(ERR_CODE_GENERAL);

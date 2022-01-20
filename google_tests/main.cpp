@@ -68,7 +68,7 @@ TEST(pipex, with_option)
     ASSERT_EQ(system("diff actual expected"), 0);
 }
 
-TEST(get_command, normal_case)
+TEST(get_fullpath, normal_case)
 {
     int argc = 5;
     char *env[] = {
@@ -81,10 +81,10 @@ TEST(get_command, normal_case)
         NULL
     };
 
-    ASSERT_STREQ(get_command("ls", env), "/bin/ls");
+    ASSERT_STREQ(get_fullpath("ls", env), "/bin/ls");
 }
 
-TEST(get_command, has_slash)
+TEST(get_fullpath, has_slash)
 {
     char *env[] = {
         "LANG=ja_JP.UTF-8",
@@ -96,10 +96,10 @@ TEST(get_command, has_slash)
         NULL
     };
 
-    ASSERT_STREQ(get_command("/bin/ls", env), "/bin/ls");
+    ASSERT_STREQ(get_fullpath("/bin/ls", env), "/bin/ls");
 }
 
-TEST(DISABLED_get_command, has_slash2)
+TEST(DISABLED_get_fullpath, has_slash2)
 {
     char *env[] = {
         "LANG=ja_JP.UTF-8",
@@ -111,7 +111,7 @@ TEST(DISABLED_get_command, has_slash2)
         NULL
     };
 
-    ASSERT_STREQ(get_command("./ls", env), "./ls");
+    ASSERT_STREQ(get_fullpath("./ls", env), "./ls");
 }
 
 TEST(pipex, abnormal_infile)
