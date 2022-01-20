@@ -38,6 +38,32 @@ char	*ft_xstrdup(const char *s)
 	return (tmp);
 }
 
+char	*ft_xsplit(const char *s, char c)
+{
+	char *tmp;
+
+	tmp = ft_split(s, c);
+	if (tmp == NULL)
+	{
+		perror("malloc");
+		exit(ERR_CODE_GENERAL);
+	}
+	return (tmp);
+}
+
+char	*ft_xcalloc(size_t count, size_t size)
+{
+	char *tmp;
+
+	tmp = ft_calloc(count, size);
+	if (tmp == NULL)
+	{
+		perror("malloc");
+		exit(ERR_CODE_GENERAL);
+	}
+	return (tmp);
+}
+
 void	puterr_exit(char *target, char *message, int exit_status)
 {
 	if (ft_putstr_fd(target, 2) == -1)
@@ -61,20 +87,15 @@ char	**create_path_lst(char **env)
 	{
 		if (env[index] == NULL)
 		{
-			path = (char **)ft_calloc(1, sizeof(char *));
+			path = (char **)ft_xcalloc(1, sizeof(char *));
 			break ;
 		}
 		if (ft_strncmp("PATH=", env[index], 5) == 0)
 		{
-			path = ft_split(env[index] + 5, ':');
+			path = ft_xsplit(env[index] + 5, ':');
 			break ;
 		}
 		index++;
-	}
-	if (path == NULL)
-	{
-		perror("malloc");
-		exit(ERR_CODE_GENERAL);
 	}
 	return (path);
 }
@@ -118,6 +139,7 @@ char	*get_command(char *file_name, char **env)
 		puterr_exit(file_exists, strerror(EACCES), ERR_CODE_CAN_NOT_EXECUTE);
 	else
 		puterr_exit(file_name, "command not found", ERR_CODE_COMMAND_NOT_FOUND);
+	return (NULL);
 }
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
@@ -125,7 +147,7 @@ void	exec_child(char *path, char **env, int read_fd, int write_fd)
 	char	**argv;
 	char	*command;
 
-	argv = ft_split(path, ' ');
+	argv = ft_xsplit(path, ' ');
 	replace_fd(read_fd, 0);
 	replace_fd(write_fd, 1);
 	command = get_command(argv[0], env);
