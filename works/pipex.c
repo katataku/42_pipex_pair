@@ -84,16 +84,13 @@ char	*get_command(char *file_name, char **env)
 	char	**path;
 	char	*fullpath;
 	char	*file_name_with_slash;
-	int		access_check;
 	char	*file_exists;
 
 	if (ft_strchr(file_name, '/') != NULL)
 	{
-		access_check = access(file_name, X_OK);
-		if (access_check == 0)
+		if (access(file_name, X_OK) == 0)
 			return (file_name);
-		access_check = access(file_name, F_OK);
-		if (access_check == 0)
+		if (access(file_name, F_OK) == 0)
 		{
 			puterr(file_name, strerror(EACCES));
 			exit(ERR_CODE_CAN_NOT_EXECUTE);
@@ -108,15 +105,13 @@ char	*get_command(char *file_name, char **env)
 	while (path[index] != NULL)
 	{
 		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
-		access_check = access(fullpath, X_OK);
-		if (access_check == 0)
+		if (access(fullpath, X_OK) == 0)
 		{
 			free(file_exists);
 			free(file_name_with_slash);
 			return (fullpath);
 		}
-		access_check = access(fullpath, F_OK);
-		if (access_check == 0 && file_exists == NULL)
+		if (file_exists == NULL && access(fullpath, F_OK) == 0)
 			file_exists = ft_xstrdup(fullpath);
 		free(fullpath);
 		index++;
