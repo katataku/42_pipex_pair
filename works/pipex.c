@@ -15,13 +15,41 @@ void	replace_fd(int old_fd, int new_fd)
 void	puterr(char *target, char *message)
 {
 	if (ft_putstr_fd(target, 2) == -1)
-		exit(1);
+		exit(ERR_CODE_GENERAL);
 	if (ft_putstr_fd(": ", 2) == -1)
-		exit(1);
+		exit(ERR_CODE_GENERAL);
 	if (ft_putstr_fd(message, 2) == -1)
-		exit(1);
+		exit(ERR_CODE_GENERAL);
 	if (ft_putstr_fd("\n", 2) == -1)
-		exit(1);
+		exit(ERR_CODE_GENERAL);
+}
+
+char	**create_path_lst(char **env)
+{
+	int		index;
+	char	**path;
+
+	index = 0;
+	while (1)
+	{
+		if (env[index] == NULL)
+		{
+			path = (char **)ft_calloc(1, sizeof(char *));
+			break ;
+		}
+		if (ft_strncmp("PATH=", env[index], 5) == 0)
+		{
+			path = ft_split(env[index] + 5, ':');
+			break ;
+		}
+		index++;
+	}
+	if (path == NULL)
+	{
+		perror("malloc");
+		exit(ERR_CODE_GENERAL);
+	}
+	return (path);
 }
 
 char	*get_command(char *file_name, char **env)
@@ -32,7 +60,6 @@ char	*get_command(char *file_name, char **env)
 	char	*file_name_with_slash;
 	int		access_check;
 
-	index = 0;
 	if (ft_strchr(file_name, '/') != NULL)
 	{
 		access_check = access(file_name, X_OK);
@@ -47,18 +74,11 @@ char	*get_command(char *file_name, char **env)
 		perror(file_name);
 		exit(ERR_CODE_COMMAND_NOT_FOUND);
 	}
-	while (1)
-	{
-		if (env[index] == NULL)
-			return (NULL);
-		if (ft_strncmp("PATH=", env[index], 5) == 0)
-			break ;
-		index++;
-	}
-	path = ft_split(env[index] + 5, ':');
+	path = create_path_lst(env);
 	file_name_with_slash = ft_strjoin("/", file_name);
-	if (file_name_with_slash == NULL)
+	if (path == NULL || file_name_with_slash == NULL)
 	{
+		perror("malloc");
 		exit (ERR_CODE_GENERAL);
 	}
 	index = 0;
@@ -67,7 +87,7 @@ char	*get_command(char *file_name, char **env)
 		fullpath = ft_strjoin(path[index], file_name_with_slash);
 		if (fullpath == NULL)
 		{
-			exit(1);
+			exit(ERR_CODE_GENERAL);
 		}
 		access_check = access(fullpath, X_OK);
 		if (access_check == 0)
@@ -84,7 +104,7 @@ char	*get_command(char *file_name, char **env)
 		fullpath = ft_strjoin(path[index], file_name_with_slash);
 		if (fullpath == NULL)
 		{
-			exit(1);
+			exit(ERR_CODE_GENERAL);
 		}
 		access_check = access(fullpath, F_OK);
 		if (access_check == 0)
