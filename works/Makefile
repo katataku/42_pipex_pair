@@ -4,7 +4,10 @@ CFLAGS = -Wall -Wextra -Werror
 XSYSCALL_SRCS = $(addprefix srcs/xsyscall/, \
 		xclose.c xfork.c xopen.c xpipe.c xwaitpid.c xdup2.c \
 		)
-SRCS = main.c pipex.c $(XSYSCALL_SRCS)
+PIPEX_SRCS = $(addprefix srcs/, \
+	pipex.c get_fullpath.c ft_xutils.c \
+	)
+SRCS = main.c $(PIPEX_SRCS) $(XSYSCALL_SRCS) 
 OBJS = $(SRCS:%.c=%.o)
 SRCS_BONUS =
 OBJS_BONUS =

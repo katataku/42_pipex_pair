@@ -21,4 +21,10 @@
 char	*get_fullpath(char *file_name, char **env);
 int		pipex(int argc, char **argv, char **env);
 int		is_valid_args(int argc, char **argv);
+
+char	*ft_xstrjoin(const char *s1, const char *s2);
+char	*ft_xstrdup(const char *s);
+char	**ft_xsplit(const char *s, char c);
+char	*ft_xcalloc(size_t count, size_t size);
+
 #endif
