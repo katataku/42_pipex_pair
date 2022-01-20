@@ -125,6 +125,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid[0] = xfork();
 	if (pid[0] == 0)
 	{
+		xclose(filedes[READ_INDEX]);
 		fd = xopen(argv[1], O_RDONLY, 0);
 		exec_child(argv[2], env, fd, filedes[WRITE_INDEX]);
 	}

@@ -548,6 +548,36 @@ TEST(pipex, both_not_executable)
     ASSERT_EQ(actual_stderr, expect_stderr.substr(4, size(expect_stderr)));
 }
 
+TEST(pipex, SIGPIPE_occur)
+{
+    std::string expect_stderr;
+    std::string actual_stderr;
+    int argc = 5;
+    char *argv[] = {"./main", "/dev/urandom", "cat", "true", "actual", NULL};
+    char *env[] = {
+        "SHELL=/bin/bash",
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+        NULL
+    };
+    int actual_status_code;
+    int expect_status_code;
+
+    unlink("actual");
+    unlink("expected");
+
+    testing::internal::CaptureStderr();
+    actual_status_code = pipex(argc, argv, env);
+    actual_stderr = testing::internal::GetCapturedStderr();
+
+    testing::internal::CaptureStderr();
+    expect_status_code = system("< /dev/urandom cat | 'true' > expected");
+    expect_stderr = testing::internal::GetCapturedStderr();
+
+    ASSERT_EQ(system("diff actual expected"), 0);
+    ASSERT_EQ(actual_status_code, expect_status_code);
+    ASSERT_EQ(actual_stderr, expect_stderr);
+}
+
 TEST(check_args, ok_normal)
 {
     int argc = 5;
