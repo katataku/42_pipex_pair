@@ -25,6 +25,19 @@ char	*ft_xstrjoin(const char *s1, const char *s2)
 	return (fullpath);
 }
 
+char	*ft_xstrdup(const char *s)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(s);
+	if (tmp == NULL)
+	{
+		perror("malloc");
+		exit(ERR_CODE_GENERAL);
+	}
+	return (tmp);
+}
+
 void	puterr(char *target, char *message)
 {
 	if (ft_putstr_fd(target, 2) == -1)
@@ -72,6 +85,7 @@ char	*get_command(char *file_name, char **env)
 	char	*fullpath;
 	char	*file_name_with_slash;
 	int		access_check;
+	char	*file_exists;
 
 	if (ft_strchr(file_name, '/') != NULL)
 	{
@@ -90,33 +104,33 @@ char	*get_command(char *file_name, char **env)
 	path = create_path_lst(env);
 	file_name_with_slash = ft_xstrjoin("/", file_name);
 	index = 0;
+	file_exists = NULL;
 	while (path[index] != NULL)
 	{
 		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		access_check = access(fullpath, X_OK);
 		if (access_check == 0)
 		{
+			free(file_exists);
 			free(file_name_with_slash);
 			return (fullpath);
 		}
-		free(fullpath);
-		index++;
-	}
-	index = 0;
-	while (path[index] != NULL)
-	{
-		fullpath = ft_xstrjoin(path[index], file_name_with_slash);
 		access_check = access(fullpath, F_OK);
-		if (access_check == 0)
-		{
-			puterr(fullpath, strerror(EACCES));
-			exit(ERR_CODE_CAN_NOT_EXECUTE);
-		}
+		if (access_check == 0 && file_exists == NULL)
+			file_exists = ft_xstrdup(fullpath);
 		free(fullpath);
 		index++;
 	}
-	puterr(file_name, "command not found");
-	exit(ERR_CODE_COMMAND_NOT_FOUND);
+	if (file_exists != NULL)
+	{
+		puterr(file_exists, strerror(EACCES));
+		exit(ERR_CODE_CAN_NOT_EXECUTE);
+	}
+	else
+	{
+		puterr(file_name, "command not found");
+		exit(ERR_CODE_COMMAND_NOT_FOUND);
+	}
 }
 
 void	exec_child(char *path, char **env, int read_fd, int write_fd)
