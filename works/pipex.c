@@ -133,7 +133,7 @@ int	pipex(int argc, char **argv, char **env)
 	pid[1] = xfork();
 	if (pid[1] == 0)
 	{
-		fd = xopen(argv[4], O_WRONLY | O_CREAT, 0644);
+		fd = xopen(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		exec_child(argv[3], env, filedes[READ_INDEX], fd);
 	}
 	xclose(filedes[READ_INDEX]);
