@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   shared.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahayashi <ahayashi@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/20 23:32:38 by ahayashi          #+#    #+#             */
-/*   Updated: 2022/02/06 02:30:06 by ahayashi         ###   ########.jp       */
+/*   Created: 2022/02/06 13:03:07 by ahayashi          #+#    #+#             */
+/*   Updated: 2022/02/06 13:03:07 by ahayashi         ###   ########.jp       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#ifndef SHARED_H
+# define SHARED_H
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_pipex		*pipex;
-	int			status;
+# include <errno.h>
+# include <string.h>
+# include <sys/wait.h>
+# include "libft.h"
+# include "typedefs.h"
+# include "xlibft.h"
+# include "xsyscall.h"
 
-	if (!is_valid_args(argc, argv))
-		return (ERR_CODE_GENERAL);
-	pipex = parse_args(argc, argv, envp);
-	status = exec_pipex(pipex);
-	return (status);
-}
+int		exec_pipex(t_pipex *pipex);
+char	*get_fullpath(char *file_name, char **env);
+
+#endif

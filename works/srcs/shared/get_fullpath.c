@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_fullpath.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahayashi <ahayashi@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/20 23:32:55 by ahayashi          #+#    #+#             */
+/*   Updated: 2022/01/20 23:32:55 by ahayashi         ###   ########.jp       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-void	puterr_exit(char *target, char *message, int exit_status)
+static void	puterr_exit(char *target, char *message, int exit_status)
 {
 	if (ft_putstr_fd(target, 2) == -1)
 		exit(ERR_CODE_GENERAL);
@@ -13,7 +25,7 @@ void	puterr_exit(char *target, char *message, int exit_status)
 	exit(exit_status);
 }
 
-char	**create_path_lst(char **env)
+static char	**create_path_lst(char **env)
 {
 	int		index;
 	char	**path;
@@ -36,7 +48,7 @@ char	**create_path_lst(char **env)
 	return (path);
 }
 
-char	*get_fullpath_find_from_path(char	*filepath)
+static char	*get_fullpath_find_from_path(char	*filepath)
 {
 	if (access(filepath, X_OK) == 0)
 		return (filepath);
@@ -46,7 +58,7 @@ char	*get_fullpath_find_from_path(char	*filepath)
 	exit(ERR_CODE_COMMAND_NOT_FOUND);
 }
 
-char	*get_fullpath_find_from_command(char **path, char *file_name)
+static char	*get_fullpath_find_from_command(char **path, char *file_name)
 {
 	int		index;
 	char	*fullpath;

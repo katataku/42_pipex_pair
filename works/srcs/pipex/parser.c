@@ -1,25 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahayashi <ahayashi@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/20 23:32:38 by ahayashi          #+#    #+#             */
-/*   Updated: 2022/02/06 02:30:06 by ahayashi         ###   ########.jp       */
+/*   Created: 2022/02/06 02:21:04 by ahayashi          #+#    #+#             */
+/*   Updated: 2022/02/06 02:21:04 by ahayashi         ###   ########.jp       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	main(int argc, char **argv, char **envp)
+t_pipex	*parse_args(int argc, char **argv, char **envp)
 {
-	t_pipex		*pipex;
-	int			status;
+	t_pipex	*pipex;
 
-	if (!is_valid_args(argc, argv))
-		return (ERR_CODE_GENERAL);
-	pipex = parse_args(argc, argv, envp);
-	status = exec_pipex(pipex);
-	return (status);
+	(void)argc;
+	pipex = (t_pipex *)ft_xcalloc(1, sizeof(t_pipex));
+	pipex->start = 2;
+	pipex->end = 3;
+	pipex->delimiter = -1;
+	pipex->src = 1;
+	pipex->dst = 4;
+	pipex->o_flag = O_WRONLY | O_CREAT | O_TRUNC;
+	pipex->argv = argv;
+	pipex->envp = envp;
+	return (pipex);
 }

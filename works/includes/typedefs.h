@@ -1,25 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   typedefs.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahayashi <ahayashi@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/20 23:32:38 by ahayashi          #+#    #+#             */
-/*   Updated: 2022/02/06 02:30:06 by ahayashi         ###   ########.jp       */
+/*   Created: 2022/01/21 00:12:26 by ahayashi          #+#    #+#             */
+/*   Updated: 2022/01/21 00:12:36 by ahayashi         ###   ########.jp       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#ifndef TYPEDEFS_H
+# define TYPEDEFS_H
 
-int	main(int argc, char **argv, char **envp)
+# define READ_INDEX 0
+# define WRITE_INDEX 1
+
+# define ERR_CODE_GENERAL 1
+# define ERR_CODE_CAN_NOT_EXECUTE 126
+# define ERR_CODE_COMMAND_NOT_FOUND 127
+
+typedef struct s_pipex
 {
-	t_pipex		*pipex;
-	int			status;
+	int		start;
+	int		end;
+	int		delimiter;
+	int		src;
+	int		dst;
+	int		o_flag;
+	char	**argv;
+	char	**envp;
+}	t_pipex;
 
-	if (!is_valid_args(argc, argv))
-		return (ERR_CODE_GENERAL);
-	pipex = parse_args(argc, argv, envp);
-	status = exec_pipex(pipex);
-	return (status);
-}
+#endif

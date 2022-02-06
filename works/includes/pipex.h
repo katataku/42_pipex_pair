@@ -1,30 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ahayashi <ahayashi@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/20 23:33:51 by ahayashi          #+#    #+#             */
+/*   Updated: 2022/02/06 02:21:59 by ahayashi         ###   ########.jp       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include "libft.h"
-# include <stdio.h>
-# include <stdlib.h>
-# include <fcntl.h>
-# include <sys/types.h>
-# include <unistd.h>
-# include <sys/wait.h>
-# include <sys/errno.h>
-# include <string.h>
-# include "xsyscall.h"
-# define READ_INDEX 0
-# define WRITE_INDEX 1
+# include "shared.h"
 
-# define ERR_CODE_GENERAL 1
-# define ERR_CODE_CAN_NOT_EXECUTE 126
-# define ERR_CODE_COMMAND_NOT_FOUND 127
-
-char	*get_fullpath(char *file_name, char **env);
-int		pipex(int argc, char **argv, char **env);
-int		is_valid_args(int argc, char **argv);
-
-char	*ft_xstrjoin(const char *s1, const char *s2);
-char	*ft_xstrdup(const char *s);
-char	**ft_xsplit(const char *s, char c);
-char	*ft_xcalloc(size_t count, size_t size);
+int			is_valid_args(int argc, char **argv);
+t_pipex		*parse_args(int argc, char **argv, char **envp);
 
 #endif
