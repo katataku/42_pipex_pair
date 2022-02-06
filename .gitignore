@@ -1,6 +1,10 @@
 build
 exp
+.DS_Store
 pipex
+pipex_bonus
+!pipex/
+!pipex_bonus/
 
 # Prerequisites
 *.d
